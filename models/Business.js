@@ -1,46 +1,89 @@
+const mongoose = require("mongoose");
+
 const businessSchema = new mongoose.Schema({
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  businessName: String,
-  description: String,
-  category: String,
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Optional for admin-created businesses
+
+  businessName: { type: String, required: true },
+  description: { type: String },
+  category: { type: String },
+
   contactDetails: {
-    phone: String,
-    email: String,
-    website: String,
-    whatsapp: String,
+    phone: { type: String },
+    email: { type: String },
+    website: { type: String },
+    whatsapp: { type: String },
   },
+
   address: {
-    street: String,
-    city: String,
-    state: String,
-    pincode: String,
+    addressArea: { type: String },
+    city: { type: String },
+    state: { type: String },
+    pincode: { type: String },
     coordinates: {
-      lat: Number,
-      lng: Number,
+      lat: { type: Number },
+      lng: { type: Number },
+    },
+    placeId: { type: String }, // Google Maps Place ID
+    formattedAddress: { type: String }, // Full formatted address from Google
+  },
+
+  businessTimings: {
+    monday: {
+      isOpen: { type: Boolean, default: true },
+      openTime: { type: String },
+      closeTime: { type: String },
+    },
+    tuesday: {
+      isOpen: { type: Boolean, default: true },
+      openTime: { type: String },
+      closeTime: { type: String },
+    },
+    wednesday: {
+      isOpen: { type: Boolean, default: true },
+      openTime: { type: String },
+      closeTime: { type: String },
+    },
+    thursday: {
+      isOpen: { type: Boolean, default: true },
+      openTime: { type: String },
+      closeTime: { type: String },
+    },
+    friday: {
+      isOpen: { type: Boolean, default: true },
+      openTime: { type: String },
+      closeTime: { type: String },
+    },
+    saturday: {
+      isOpen: { type: Boolean, default: false },
+      openTime: { type: String },
+      closeTime: { type: String },
+    },
+    sunday: {
+      isOpen: { type: Boolean, default: false },
+      openTime: { type: String },
+      closeTime: { type: String },
     },
   },
-  workingHours: {
-    type: Map,
-    of: {
-      isOpen: Boolean,
-      openTime: String,
-      closeTime: String,
-    },
-  },
+
   holidayDates: [Date],
-  overrideHours: {
-    type: Map,
-    of: {
-      isOpen: Boolean,
-      openTime: String,
-      closeTime: String,
+
+  claimStatus: {
+    isClaimed: { type: Boolean, default: false },
+    claimedAt: { type: Date },
+    claimRequest: {
+      status: { type: String, enum: ["pending", "approved", "rejected"] },
+      requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      requestedAt: { type: Date },
+      documents: [String], // URLs of submitted verification docs
     },
   },
+
   photos: [String],
   ratings: { type: Number, default: 0 },
   reviewCount: { type: Number, default: 0 },
-  verified: Boolean,
-  trustBadge: Boolean,
+  verified: { type: Boolean, default: false },
+  trustBadge: { type: Boolean, default: false },
+
   createdAt: { type: Date, default: Date.now },
 });
 
