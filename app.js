@@ -49,7 +49,12 @@ app.use(
 
 // 🔗 Routes
 const businessRoutes = require("./routes/businessRoutes");
-
 app.use("/api/businesses", businessRoutes);
+
+const reviewRoute = require("./routes/review");
+app.use("/api/reviews", reviewRoute);
+
+const userRoutes = require("./routes/userRoutes");
+app.use("/api/users", userRoutes);
 
 module.exports = app;

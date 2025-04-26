@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
   },
   avatarUrl: String,
   createdAt: { type: Date, default: Date.now },
+  otp: {
+    code: String,
+    expiresAt: Date,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);
