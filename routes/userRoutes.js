@@ -1,14 +1,18 @@
+// routes/userRoutes.js
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 
-router.post("/register", userController.registerUser);
-router.post("/send-otp", userController.sendOTP);
-router.post("/verify-otp", userController.verifyOTP);
+// User Signup
+router.post("/signup", userController.signup);
 
-router.post("/admin/register", userController.adminRegister);
-router.post("/admin/login", userController.adminLogin);
+// User Forgot Password
+router.post("/forgot-password", userController.forgotPassword);
 
-router.post("/logout", userController.logout);
+// User Verify OTP
+router.post("/verify-otp", userController.verifyOtp);
+
+// User Reset Password
+router.post("/reset-password", userController.resetPassword);
 
 module.exports = router;

@@ -1,0 +1,14 @@
+{
+  "name": "John Doe",
+  "email": "karthick251087@gmail.com",
+  "phone": "9043814241"
+}
+{
+  "email": "karthick251087@gmail.com",
+}
+{
+  "email": "karthick251087@gmail.com",
+  "otp": "123456"
+}
+
+

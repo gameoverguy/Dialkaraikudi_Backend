@@ -1,21 +1,39 @@
+// models/User.js
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  phone: String,
-  password: String,
-  userType: {
-    type: String,
-    enum: ["user", "business", "admin"],
-    default: "user",
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    phone: { type: String, required: true },
+
+    password: { type: String, required: true }, // password is required for user login
+
+    userType: {
+      type: String,
+      enum: ["user", "business"],
+      default: "user",
+    },
+
+    avatarUrl: { type: String }, // optional
+
+    otp: {
+      code: { type: String },
+      expiresAt: { type: Date },
+    },
+
+    isBlocked: { type: Boolean, default: false }, // to support block feature later
   },
-  avatarUrl: String,
-  createdAt: { type: Date, default: Date.now },
-  otp: {
-    code: String,
-    expiresAt: Date,
-  },
-});
+  { timestamps: true }
+); // automatically adds createdAt and updatedAt
+// so you don't have to manually add createdAt.
 
 module.exports = mongoose.model("User", userSchema);

@@ -47,14 +47,19 @@ app.use(
   })
 );
 
-// 🔗 Routes
-const businessRoutes = require("./routes/businessRoutes");
-app.use("/api/businesses", businessRoutes);
-
-const reviewRoute = require("./routes/review");
-app.use("/api/reviews", reviewRoute);
-
+// Import routers
+const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-app.use("/api/users", userRoutes);
+const adminRoutes = require("./routes/adminRoutes");
+
+// Route Mounting
+app.use("/auth", authRoutes); // login
+app.use("/auth", userRoutes); // signup, forgot-password, reset-password for users
+app.use("/admin", adminRoutes); // forgot-password, reset-password for admins
+
+// Example Home
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
 
 module.exports = app;
