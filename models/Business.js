@@ -5,7 +5,11 @@ const businessSchema = new mongoose.Schema({
 
   businessName: { type: String, required: true },
   description: { type: String },
-  category: { type: String },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
 
   contactDetails: {
     phone: { type: String },

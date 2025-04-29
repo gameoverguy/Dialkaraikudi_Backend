@@ -1,0 +1,24 @@
+for adding a category
+http://192.168.1.33:5000/categories/
+POST
+{
+  "categoryName": "tailoring_services",
+  "displayName": "Tailoring Services",
+  "description": "Custom tailoring and fashion design",
+  "iconUrl": "https://example.com/icons/tailoring.png"
+}
+
+for updating a category
+http://192.168.1.33:5000/categories/:id
+PUT   
+{
+  "displayName": "Premium Tailoring Services",
+  "description": "Elite fashion, boutique stitching & alteration services"
+}
+
+
+POST /categories	    Create new category
+GET	 /categories	    Get all categories
+GET	 /categories/:id	Get category by ID
+PUT	 /categories/:id	Update category by ID
+DELETE	/categories/:id	Delete category by ID

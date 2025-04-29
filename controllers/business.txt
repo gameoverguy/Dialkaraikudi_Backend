@@ -4,7 +4,7 @@ http://192.168.1.33:5000/business
 {
   "businessName": "Cafe Aroma",
   "description": "Best aromatic coffee and desserts.",
-  "category": "Cafe",
+  "category": "6632c4f6aa19ef0023dfd87e",
   "contactDetails": {
     "phone": "+919888888888",
     "email": "aroma.cafe@example.com",

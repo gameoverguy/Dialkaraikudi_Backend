@@ -12,10 +12,13 @@ exports.createBusiness = async (req, res) => {
   }
 };
 
-// Get All Businesses
+// Get All Businesses with Owner + Category populated
 exports.getAllBusinesses = async (req, res) => {
   try {
-    const businesses = await Business.find().populate("owner", "name email");
+    const businesses = await Business.find()
+      .populate("owner", "name email")
+      .populate("category", "displayName iconUrl"); // ✨ populate category info
+
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -25,7 +28,10 @@ exports.getAllBusinesses = async (req, res) => {
 // Get Single Business by ID (WITH Reviews and User Info)
 exports.getBusinessById = async (req, res) => {
   try {
-    const business = await Business.findById(req.params.id);
+    const business = await Business.findById(req.params.id).populate(
+      "category",
+      "displayName iconUrl"
+    );
 
     if (!business) {
       return res
