@@ -1,67 +1,73 @@
+POST
+http://192.168.1.33:5000/business
+
 {
-  "businessName": "Lakshmi Boutique",
-  "description": "Women’s ethnic wear and tailoring services.",
-  "category": "Retail & E-commerce",
+  "businessName": "Cafe Aroma",
+  "description": "Best aromatic coffee and desserts.",
+  "category": "Cafe",
   "contactDetails": {
-    "phone": "9876543210",
-    "email": "lakshmi@example.com",
-    "website": "http://lakshmiboutique.in",
-    "whatsapp": "9876543210"
+    "phone": "+919888888888",
+    "email": "aroma.cafe@example.com",
+    "website": "http://cafearoma.com",
+    "whatsapp": "+919888888888"
   },
   "address": {
-    "addressArea": "Gandhipuram",
-    "city": "Coimbatore",
+    "addressArea": "Anna Nagar",
+    "city": "Chennai",
     "state": "Tamil Nadu",
-    "pincode": "641012",
+    "pincode": "600040",
     "coordinates": {
-      "lat": 11.0168,
-      "lng": 76.9558
+      "lat": 13.0860,
+      "lng": 80.2100
     },
-    "placeId": "ChIJM6vqgFcRqDsRcW0HpljVfK8",
-    "formattedAddress": "Gandhipuram, Coimbatore, Tamil Nadu 641012, India"
+    "placeId": "ChIJK0Y2Cw8UujER52jS2MSh6Wg",
+    "formattedAddress": "Anna Nagar, Chennai, Tamil Nadu, India"
   },
   "businessTimings": {
-    "monday": { "isOpen": true, "openTime": "10:00 AM", "closeTime": "8:00 PM" },
-    "tuesday": { "isOpen": true, "openTime": "10:00 AM", "closeTime": "8:00 PM" },
-    "wednesday": { "isOpen": true, "openTime": "10:00 AM", "closeTime": "8:00 PM" },
-    "thursday": { "isOpen": true, "openTime": "10:00 AM", "closeTime": "8:00 PM" },
-    "friday": { "isOpen": true, "openTime": "10:00 AM", "closeTime": "8:00 PM" },
-    "saturday": { "isOpen": true, "openTime": "10:00 AM", "closeTime": "6:00 PM" },
-    "sunday": { "isOpen": false, "openTime": "", "closeTime": "" }
+    "monday": { "isOpen": true, "openTime": "08:00", "closeTime": "22:00" },
+    "tuesday": { "isOpen": true, "openTime": "08:00", "closeTime": "22:00" },
+    "wednesday": { "isOpen": true, "openTime": "08:00", "closeTime": "22:00" },
+    "thursday": { "isOpen": true, "openTime": "08:00", "closeTime": "22:00" },
+    "friday": { "isOpen": true, "openTime": "08:00", "closeTime": "23:00" },
+    "saturday": { "isOpen": true, "openTime": "09:00", "closeTime": "23:00" },
+    "sunday": { "isOpen": true, "openTime": "09:00", "closeTime": "22:00" }
   },
-  "holidayDates": ["2025-05-01", "2025-08-15"],
   "photos": [
-    "https://example.com/photo1.jpg",
-    "https://example.com/photo2.jpg"
-  ],
-  "verified": true,
-  "trustBadge": true,
-  "claimStatus": {
-    "isClaimed": true,
-    "claimedAt": "2025-04-01T12:00:00Z",
-    "claimRequest": {
-      "status": "approved",
-      "requestedBy": "6611b4e2b3f9dc3c5d86ec82",
-      "requestedAt": "2025-03-30T10:30:00Z",
-      "documents": [
-        "https://example.com/doc1.pdf",
-        "https://example.com/doc2.pdf"
-      ]
-    }
-  },
-  "ratings": 4.5,
-  "reviewCount": 18
+    "https://example.com/photos/cafe_front.jpg",
+    "https://example.com/photos/cafe_inside.jpg"
+  ]
 }
 
 
+for getting ALL business
+GET
+http://192.168.1.33:5000/business
+
+for getting a SINGLE business
+GET
+http://192.168.1.33:5000/business/:id
 
 
+for updating a single business
+PUT
+http://192.168.1.33:5000/business/:id
 {
   "description": "Premium tailoring and boutique services for women.",
   "contactDetails": {
     "phone": "9876543211",
     "email": "newemail@boutique.com"
   },
-  "ratings": 4.8
+  "ratings": 4.8,
+  "addPhotos": [
+    "https://example.com/photos/cafe_menu.jpg",
+    "https://example.com/photos/cafe_coffee.jpg"
+  ],
+  "removePhotos": [
+    "https://example.com/photos/cafe_front.jpg"
+  ]
 }
 
+
+for deleting a single business
+DELETE
+http://192.168.1.33:5000/business/:id

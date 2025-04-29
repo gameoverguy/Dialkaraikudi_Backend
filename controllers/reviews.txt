@@ -1,0 +1,31 @@
+for adding a review and rating
+http://192.168.1.33:5000/reviews/
+POST
+{
+  "user": "6630be8e34e32a001fe0e63f",   // replace with actual User ID
+  "business": "6630c82a34e32a001fe0e7bd",  // replace with actual Business ID
+  "rating": 4,
+  "comment": "Great service and friendly staff!"
+}
+
+
+for getting all reviews and ratings
+http://192.168.1.33:5000/reviews/
+GET
+
+
+for getting a single review and rating
+http://192.168.1.33:5000/reviews/:id
+GET
+
+for getting a single review and rating
+http://192.168.1.33:5000/reviews/:id
+PUT
+{
+  "rating": 5,
+  "comment": "Updated comment: Absolutely loved the service!"
+}
+
+for getting a single review and rating
+http://192.168.1.33:5000/reviews/:id
+DELETE
