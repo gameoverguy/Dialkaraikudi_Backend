@@ -83,3 +83,63 @@ exports.deleteCategory = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ✅ Bulk Upload Categories
+exports.bulkUploadCategories = async (req, res) => {
+  try {
+    const categories = req.body;
+
+    if (!Array.isArray(categories)) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Data must be an array of categories.",
+        });
+    }
+
+    const results = {
+      created: [],
+      skipped: [],
+      errors: [],
+    };
+
+    for (const cat of categories) {
+      const { categoryName, displayName, description, iconUrl } = cat;
+
+      if (!categoryName || !displayName) {
+        results.errors.push({
+          categoryName,
+          message: "categoryName and displayName are required.",
+        });
+        continue;
+      }
+
+      const existing = await Category.findOne({ categoryName });
+
+      if (existing) {
+        results.skipped.push({
+          categoryName,
+          message: "Category already exists.",
+        });
+        continue;
+      }
+
+      try {
+        const newCat = await Category.create({
+          categoryName,
+          displayName,
+          description,
+          iconUrl,
+        });
+        results.created.push(newCat);
+      } catch (err) {
+        results.errors.push({ categoryName, message: err.message });
+      }
+    }
+
+    res.status(201).json({ success: true, result: results });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

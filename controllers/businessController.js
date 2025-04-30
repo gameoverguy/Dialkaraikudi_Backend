@@ -117,3 +117,60 @@ exports.deleteBusiness = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+exports.bulkUploadBusinesses = async (req, res) => {
+  try {
+    const businesses = req.body;
+
+    if (!Array.isArray(businesses)) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Data must be an array of businesses.",
+        });
+    }
+
+    const results = {
+      created: [],
+      skipped: [],
+      errors: [],
+    };
+
+    for (const b of businesses) {
+      const { businessName, category, owner } = b;
+
+      if (!businessName || !category) {
+        results.errors.push({
+          businessName: businessName || "(missing)",
+          message: "Missing required field: businessName or category",
+        });
+        continue;
+      }
+
+      try {
+        // Optional: Check for duplicate business name within the same category (or based on logic you prefer)
+        const existing = await Business.findOne({ businessName, category });
+        if (existing) {
+          results.skipped.push({
+            businessName,
+            message: "Business already exists in this category",
+          });
+          continue;
+        }
+
+        const newBusiness = await Business.create(b);
+        results.created.push(newBusiness);
+      } catch (err) {
+        results.errors.push({
+          businessName,
+          message: err.message,
+        });
+      }
+    }
+
+    res.status(201).json({ success: true, result: results });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
