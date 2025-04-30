@@ -55,6 +55,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const businessRoutes = require("./routes/businessRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const categoryRoute = require("./routes/categoryRoutes");
+const googleAuthenticationRoutes = require('./functions/OAuth/GoogleAuthenticationRoutes');
 
 // Route Mounting
 app.use("/auth", authRoutes); // login
@@ -63,6 +64,7 @@ app.use("/admin", adminRoutes); // forgot-password, reset-password for admins
 app.use("/business", businessRoutes); //business CRUD operations
 app.use("/reviews", reviewRoutes); //review and rating crud operations
 app.use("/categories", categoryRoute); //category CRUD operations
+app.use('/googleauthentication', googleAuthenticationRoutes);
 
 // Example Home
 app.get("/", (req, res) => {
