@@ -17,7 +17,7 @@ const allowedOrigins = [
   "http://192.168.1.13:5173",
   "http://192.168.1.12:5173",
   "http://192.168.1.9:5173",
-  "https://lucky-choux-a6d99e.netlify.app/",
+  "https://lucky-choux-a6d99e.netlify.app",
 ];
 
 // CORS setup
