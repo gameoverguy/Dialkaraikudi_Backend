@@ -58,7 +58,7 @@ const categoryRoute = require("./routes/categoryRoutes");
 
 // Route Mounting
 app.use("/auth", authRoutes); // login
-app.use("/auth", userRoutes); // signup, forgot-password, reset-password for users
+app.use("/user", userRoutes); // signup, forgot-password, reset-password for users
 app.use("/admin", adminRoutes); // forgot-password, reset-password for admins
 app.use("/business", businessRoutes); //business CRUD operations
 app.use("/reviews", reviewRoutes); //review and rating crud operations

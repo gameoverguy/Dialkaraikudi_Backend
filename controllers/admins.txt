@@ -1,0 +1,31 @@
+for forgot password
+POST
+http://192.168.1.33:5000/admin/forgotpassword
+{
+  "email": "admin@example.com"
+}
+
+for verifyotp 
+POST
+http://192.168.1.33:5000/admin/verifyotp
+{
+  "email": "admin@example.com",
+  "otp": "1234"  // ⚠️ Replace this with the actual OTP received via email
+}
+
+for resetpassword 
+POST
+http://192.168.1.33:5000/admin/resetpassword
+{
+  "email": "admin@example.com",
+  "newPassword": "NewSecure@123",
+  "confirmPassword": "NewSecure@123"
+}
+
+for adminlogin
+POST
+http://192.168.1.33:5000/admin/login
+{
+  "email": "admin@example.com",
+  "Password": "NewSecure@123",
+}

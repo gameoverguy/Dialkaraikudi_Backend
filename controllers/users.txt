@@ -1,14 +1,70 @@
+for adding a users
+POST
+http://192.168.1.33:5000/user/signup
 {
-  "name": "John Doe",
+  "name": "Karthick",
   "email": "karthick251087@gmail.com",
-  "phone": "9043814241"
-}
-{
-  "email": "karthick251087@gmail.com",
-}
-{
-  "email": "karthick251087@gmail.com",
-  "otp": "123456"
+  "phone": "9876543210",
+  "password": "test@123"
 }
 
+for forgot password
+POST
+http://192.168.1.33:5000/user/forgotpassword
+{
+  "email": "karthick251087@gmail.com"
+}
+
+for verifyotp
+POST
+http://192.168.1.33:5000/user/verifyotp
+{
+  "email": "karthick251087@gmail.com",
+  "otp": "1234"  // Replace with actual OTP from your email
+}
+
+for Reset password
+POST
+http://192.168.1.33:5000/user/resetpassword
+{
+  "email": "karthick251087@gmail.com",
+  "newPassword": "New@123",
+  "confirmPassword": "New@123"
+}
+
+
+for userlogin
+POST
+http://192.168.1.33:5000/user/login
+{
+  "email": "admin@example.com",
+  "Password": "NewSecure@123",
+}
+
+Get All Users
+GET
+http://192.168.1.33:5000/api/admin/users
+
+
+GET
+http://192.168.1.33:5000/api/admin/users/:id
+(Replace :id with the actual user ID)
+
+Example:
+http://192.168.1.33:5000/api/admin/users/661ed1234abcde456789
+
+Update User
+PUT
+http://192.168.1.33:5000/api/admin/users/:id
+{
+  "name": "New Name",
+  "phone": "9123456789",
+  "userType": "admin",
+  "isBlocked": false
+}
+
+Delete User
+DELETE
+http://192.168.1.33:5000/api/admin/users/:id
+(Replace :id with the actual user ID)
 

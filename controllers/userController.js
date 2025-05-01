@@ -3,6 +3,51 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
 
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    // Check if user is blocked
+    if (user.isBlocked)
+      return res.status(403).json({ message: "Your account is blocked." });
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid password." });
+
+    // Generate JWT
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        userType: user.userType,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Send success response
+    res.status(200).json({
+      message: "Login successful.",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        userType: user.userType,
+        avatarUrl: user.avatarUrl || null,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // User Signup
 exports.signup = async (req, res) => {
   try {
@@ -72,11 +117,9 @@ exports.verifyOtp = async (req, res) => {
       return res.status(400).json({ message: "Invalid OTP." });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "OTP verified successfully. You can now reset your password.",
-      });
+    res.status(200).json({
+      message: "OTP verified successfully. You can now reset your password.",
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -107,6 +150,60 @@ exports.resetPassword = async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: "Password reset successful." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password -otp");
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get single user by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password -otp");
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update user
+exports.updateUser = async (req, res) => {
+  try {
+    const { name, phone, userType, isBlocked } = req.body;
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    user.name = name ?? user.name;
+    user.phone = phone ?? user.phone;
+    user.userType = userType ?? user.userType;
+    user.isBlocked = isBlocked ?? user.isBlocked;
+
+    await user.save();
+    res.status(200).json({ message: "User updated successfully." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Delete user
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    res.status(200).json({ message: "User deleted successfully." });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -3,13 +3,12 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
 
+router.post("/login", adminController.loginAdmin);
 // Admin Forgot Password
-router.post("/forgot-password", adminController.forgotPassword);
-
+router.post("/forgotpassword", adminController.forgotPassword);
 // Admin Verify OTP
-router.post("/verify-otp", adminController.verifyOtp);
-
+router.post("/verifyotp", adminController.verifyOtp);
 // Admin Reset Password
-router.post("/reset-password", adminController.resetPassword);
+router.post("/resetpassword", adminController.resetPassword);
 
 module.exports = router;
