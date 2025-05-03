@@ -3,6 +3,7 @@
 const Admin = require("../models/Admin");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/sendEmail");
+const jwt = require("jsonwebtoken");
 
 // Admin Login
 exports.loginAdmin = async (req, res) => {
@@ -22,6 +23,7 @@ exports.loginAdmin = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password." });
     }
+    console.log("test");
 
     const token = jwt.sign(
       {
