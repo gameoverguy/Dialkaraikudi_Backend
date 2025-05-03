@@ -1,0 +1,56 @@
+Add/Update a Slot in a Page
+http://192.168.1.33:5000/ads/pages/home/slots
+POST
+{
+  "slot": "top_banner",
+  "isSlider": true
+}
+
+
+Add an Ad to a Slot
+http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads
+POST
+{
+  "type": "image",
+  "mediaUrl": "https://example.com/banner1.jpg",
+  "link": "https://your-link.com",
+  "isActive": true,
+  "sortOrder": 1
+}
+
+Add a Video Ad
+http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads
+POST
+{
+  "type": "video",
+  "mediaUrl": "https://example.com/ad-video.mp4",
+  "link": "https://video-click-link.com",
+  "isActive": true,
+  "sortOrder": 2
+}
+
+Add a html Ad
+http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads
+POST
+{
+  "type": "html",
+  "htmlContent": "<div style='background:red;color:white;'>Special Offer!</div>",
+  "link": "https://html-ad-link.com",
+  "isActive": true,
+  "sortOrder": 3
+}
+
+Update an Existing Ad
+http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads/{adId}
+PUT
+{
+  "link": "https://updated-link.com",
+  "isActive": false
+}
+
+Delete an Ad
+http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads/{adId}
+
+
+Delete an Ad slot
+http://192.168.1.33:5000/ads/pages/home/slots/top_banner

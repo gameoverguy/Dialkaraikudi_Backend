@@ -43,19 +43,19 @@ http://192.168.1.33:5000/user/login
 
 Get All Users
 GET
-http://192.168.1.33:5000/api/admin/users
+http://192.168.1.33:5000/user
 
 
 GET
-http://192.168.1.33:5000/api/admin/users/:id
+http://192.168.1.33:5000/user/:id
 (Replace :id with the actual user ID)
 
 Example:
-http://192.168.1.33:5000/api/admin/users/661ed1234abcde456789
+http://192.168.1.33:5000/user/661ed1234abcde456789
 
 Update User
 PUT
-http://192.168.1.33:5000/api/admin/users/:id
+http://192.168.1.33:5000/user/:id
 {
   "name": "New Name",
   "phone": "9123456789",
@@ -65,6 +65,6 @@ http://192.168.1.33:5000/api/admin/users/:id
 
 Delete User
 DELETE
-http://192.168.1.33:5000/api/admin/users/:id
+http://192.168.1.33:5000/user/:id
 (Replace :id with the actual user ID)
 

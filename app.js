@@ -14,6 +14,7 @@ const app = express();
 // Allowed frontend origins
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:5174",
   "http://192.168.1.13:5173",
   "http://192.168.1.12:5173",
   "http://192.168.1.9:5173",
@@ -55,6 +56,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const businessRoutes = require("./routes/businessRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const categoryRoute = require("./routes/categoryRoutes");
+const advertisementRoutes = require("./routes/advertisementRoutes");
 
 // Route Mounting
 app.use("/auth", authRoutes); // login
@@ -63,6 +65,7 @@ app.use("/admin", adminRoutes); // forgot-password, reset-password for admins
 app.use("/business", businessRoutes); //business CRUD operations
 app.use("/reviews", reviewRoutes); //review and rating crud operations
 app.use("/categories", categoryRoute); //category CRUD operations
+app.use("/ads", advertisementRoutes);
 
 // Example Home
 app.get("/", (req, res) => {
