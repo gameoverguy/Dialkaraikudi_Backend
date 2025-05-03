@@ -1,0 +1,5 @@
+PORT=5000
+MONGO_URI=mongodb+srv://admin:admin@dialkaraikudi.4k6i8ve.mongodb.net/?retryWrites=true&w=majority&appName=dialkaraikudi
+JWT_SECRET=12345
+EMAIL_USER=karthick251087@gmail.com
+EMAIL_PASS=sgabhuhjjcigzmml
