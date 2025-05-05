@@ -25,6 +25,19 @@ exports.getAllBusinesses = async (req, res) => {
   }
 };
 
+exports.getBusinessesByCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params; // Use params instead of query
+    const businesses = await Business.find({ category: categoryId })
+      .populate("owner", "name email")
+      .populate("category", "displayName iconUrl");
+
+    res.status(200).json({ success: true, data: businesses });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Get Single Business by ID (WITH Reviews and User Info)
 exports.getBusinessById = async (req, res) => {
   try {
@@ -118,17 +131,44 @@ exports.deleteBusiness = async (req, res) => {
   }
 };
 
+// Search Businesses by keyword using req.params
+exports.searchBusinesses = async (req, res) => {
+  try {
+    const { keyword } = req.params;
+
+    if (!keyword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Keyword is required" });
+    }
+
+    const filter = {
+      $or: [
+        { businessName: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+        { "address.formattedAddress": { $regex: keyword, $options: "i" } },
+      ],
+    };
+
+    const businesses = await Business.find(filter)
+      .populate("owner", "name email")
+      .populate("category", "displayName iconUrl");
+
+    res.status(200).json({ success: true, data: businesses });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.bulkUploadBusinesses = async (req, res) => {
   try {
     const businesses = req.body;
 
     if (!Array.isArray(businesses)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Data must be an array of businesses.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Data must be an array of businesses.",
+      });
     }
 
     const results = {
