@@ -3,7 +3,14 @@ const Category = require("../models/Category");
 // ✅ Create new Category
 exports.createCategory = async (req, res) => {
   try {
-    const { categoryName, displayName, description, iconUrl } = req.body;
+    const {
+      categoryName,
+      displayName,
+      description,
+      iconUrl,
+      imageUrl,
+      categoryType,
+    } = req.body;
 
     const existing = await Category.findOne({ categoryName });
     if (existing) {
@@ -17,6 +24,8 @@ exports.createCategory = async (req, res) => {
       displayName,
       description,
       iconUrl,
+      imageUrl,
+      categoryType,
     });
 
     res.status(201).json({ success: true, data: category });
@@ -90,12 +99,10 @@ exports.bulkUploadCategories = async (req, res) => {
     const categories = req.body;
 
     if (!Array.isArray(categories)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Data must be an array of categories.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Data must be an array of categories.",
+      });
     }
 
     const results = {
@@ -105,7 +112,14 @@ exports.bulkUploadCategories = async (req, res) => {
     };
 
     for (const cat of categories) {
-      const { categoryName, displayName, description, iconUrl } = cat;
+      const {
+        categoryName,
+        displayName,
+        description,
+        iconUrl,
+        imageUrl,
+        categoryType,
+      } = cat;
 
       if (!categoryName || !displayName) {
         results.errors.push({
@@ -131,6 +145,8 @@ exports.bulkUploadCategories = async (req, res) => {
           displayName,
           description,
           iconUrl,
+          imageUrl,
+          categoryType,
         });
         results.created.push(newCat);
       } catch (err) {

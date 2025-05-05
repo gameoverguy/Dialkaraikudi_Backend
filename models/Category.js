@@ -18,6 +18,10 @@ const categorySchema = new mongoose.Schema({
   iconUrl: {
     type: String,
   }, // optional: small icon for frontend
+  imageUrl: {
+    type: String,
+  },
+  categoryType: { type: String, enum: ["product", "service"] },
   isActive: {
     type: Boolean,
     default: true,
