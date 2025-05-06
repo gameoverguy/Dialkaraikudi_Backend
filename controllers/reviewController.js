@@ -98,3 +98,28 @@ exports.deleteReview = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
+// ✅ GET review by user and business
+exports.getMyReview = async (req, res) => {
+  try {
+    const { user, business } = req.query;
+
+    if (!user || !business) {
+      return res
+        .status(400)
+        .json({ success: false, error: "User and Business ID required" });
+    }
+
+    const review = await Review.findOne({ user, business });
+
+    if (!review) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+    }
+
+    res.status(200).json({ success: true, data: review });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
