@@ -1,7 +1,7 @@
 // models/User.js
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema(
+const vendorSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     email: {
@@ -16,16 +16,16 @@ const userSchema = new mongoose.Schema(
     userType: {
       type: String,
       enum: ["user", "vendor"],
-      default: "user",
+      default: "vendor",
     },
     avatarUrl: { type: String },
     otp: {
       code: { type: String },
       expiresAt: { type: Date },
     },
-    isBlocked: { type: Boolean, default: false }, // to support block feature later
+    isBlocked: { type: Boolean, default: false },
   },
   { timestamps: true }
-); // automatically adds createdAt and updatedAt so you don't have to manually add createdAt.
+);
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Vendor", vendorSchema);
