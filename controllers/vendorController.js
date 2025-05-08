@@ -203,3 +203,25 @@ exports.deleteVendor = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Bulk Add Vendors
+exports.bulkAddVendors = async (req, res) => {
+  try {
+    const vendorsData = req.body;
+
+    const hashedVendors = await Promise.all(
+      vendorsData.map(async (vendor) => ({
+        ...vendor,
+        password: await bcrypt.hash(vendor.password, 10),
+      }))
+    );
+
+    const createdVendors = await Vendor.insertMany(hashedVendors);
+
+    res.status(201).json({
+      message: `${createdVendors.length} vendors created successfully.`,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

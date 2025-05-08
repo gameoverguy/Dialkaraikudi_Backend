@@ -81,14 +81,15 @@ const businessSchema = new mongoose.Schema({
       documents: [String], // URLs of submitted verification docs
     },
   },
+  GST: [String],
 
   photos: [String],
   ratings: { type: Number, default: 0 },
   reviewCount: { type: Number, default: 0 },
   verified: { type: Boolean, default: false },
   trustBadge: { type: Boolean, default: false },
-
   createdAt: { type: Date, default: Date.now },
+  isApproved: { type: Boolean, default: true },
 });
 
 module.exports = mongoose.model("Business", businessSchema);

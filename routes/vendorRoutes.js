@@ -8,6 +8,7 @@ router.post("/login", vendorController.login);
 router.post("/forgotpassword", vendorController.forgotPassword);
 router.post("/verifyotp", vendorController.verifyOtp);
 router.post("/resetpassword", vendorController.resetPassword);
+router.post("/bulkaddvendors", vendorController.bulkAddVendors);
 
 router.get("/", vendorController.getAllVendors);
 router.get("/:id", vendorController.getVendorById);
