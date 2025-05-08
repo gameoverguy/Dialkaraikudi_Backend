@@ -1,5 +1,159 @@
 const Business = require("../models/Business");
 const Review = require("../models/Review");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/sendEmail");
+
+// Business Signup (Simplified)
+exports.businessSignup = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if the business already exists by email
+    const existingBusiness = await Business.findOne({ email });
+    if (existingBusiness) {
+      return res.status(400).json({ message: "Email already registered." });
+    }
+
+    // Hash the password
+    req.body.password = await bcrypt.hash(password, 10);
+
+    // Create and save business
+    const business = new Business(req.body);
+    await business.save();
+
+    res.status(201).json({ message: "Signup successful", data: business });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Business Login
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const business = await Business.findOne({ email });
+    if (!business)
+      return res.status(404).json({ message: "Business not found." });
+
+    if (business.isBlocked) {
+      return res.status(403).json({ message: "Your account is blocked." });
+    }
+
+    const isMatch = await bcrypt.compare(password, business.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid password." });
+    }
+
+    const token = jwt.sign(
+      {
+        businessId: business._id,
+        email: business.email,
+        userType: "business",
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(200).json({
+      message: "Login successful.",
+      token,
+      business: {
+        id: business._id,
+        name: business.name,
+        email: business.email,
+        phone: business.phone,
+        userType: "business",
+        avatarUrl: business.avatarUrl || null,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Forgot Password (Send OTP)
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const business = await Business.findOne({ email });
+    if (!business) {
+      return res.status(404).json({ message: "Business not found." });
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    const expiresAt = Date.now() + 5 * 60 * 1000;
+
+    business.otp = { code: otp, expiresAt };
+    await business.save();
+
+    await sendEmail(email, "Password Reset OTP", `Your OTP is ${otp}`);
+
+    res.status(200).json({ message: "OTP sent to your email." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Verify OTP
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const business = await Business.findOne({ email });
+    if (!business)
+      return res.status(404).json({ message: "Business not found." });
+
+    if (!business.otp.code || !business.otp.expiresAt) {
+      return res.status(400).json({ message: "No OTP request found." });
+    }
+
+    if (business.otp.expiresAt < Date.now()) {
+      return res.status(400).json({ message: "OTP has expired." });
+    }
+
+    if (business.otp.code !== otp) {
+      return res.status(400).json({ message: "Invalid OTP." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "OTP verified. Proceed to reset password." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Reset Password
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword, confirmPassword } = req.body;
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match." });
+    }
+
+    const business = await Business.findOne({ email });
+    if (!business)
+      return res.status(404).json({ message: "Business not found." });
+
+    if (!business.otp.code) {
+      return res
+        .status(400)
+        .json({ message: "OTP verification required before reset." });
+    }
+
+    business.password = await bcrypt.hash(newPassword, 10);
+    business.otp = { code: null, expiresAt: null };
+    await business.save();
+
+    res.status(200).json({ message: "Password has been reset." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // Create Business
 exports.createBusiness = async (req, res) => {
@@ -146,6 +300,7 @@ exports.searchBusinesses = async (req, res) => {
       $or: [
         { businessName: { $regex: keyword, $options: "i" } },
         { description: { $regex: keyword, $options: "i" } },
+        { category: { $regex: keyword, $options: "i" } },
         { "address.formattedAddress": { $regex: keyword, $options: "i" } },
       ],
     };

@@ -1,42 +1,70 @@
 POST
-http://192.168.1.33:5000/business
+http://192.168.1.33:5000/business/signup
 
 {
-  "businessName": "Cafe Aroma",
-  "description": "Best aromatic coffee and desserts.",
-  "category": "6632c4f6aa19ef0023dfd87e",
+  "email": "demo@freshmart.com",
+  "password": "FreshMart@123",
+  "businessName": "FreshMart",
+  "ownerName": "John Doe",
+  "description": "Local grocery store offering fresh produce.",
+  "category": "663bcb931eb81bb4fe7722e2",  // Example ObjectId
   "contactDetails": {
-    "phone": "+919888888888",
-    "email": "aroma.cafe@example.com",
-    "website": "http://cafearoma.com",
-    "whatsapp": "+919888888888"
+    "phone": "9876543210",
+    "website": "https://freshmart.com",
+    "whatsapp": "9876543210"
   },
   "address": {
-    "addressArea": "Anna Nagar",
+    "addressArea": "Main Street",
     "city": "Chennai",
     "state": "Tamil Nadu",
-    "pincode": "600040",
+    "pincode": "600001",
     "coordinates": {
-      "lat": 13.0860,
-      "lng": 80.2100
+      "lat": 13.0827,
+      "lng": 80.2707
     },
-    "placeId": "ChIJK0Y2Cw8UujER52jS2MSh6Wg",
-    "formattedAddress": "Anna Nagar, Chennai, Tamil Nadu, India"
+    "placeId": "ChIJZ1G8TKd5UjoR0l-xnL2m7pI",
+    "formattedAddress": "Main Street, Chennai, Tamil Nadu 600001"
   },
   "businessTimings": {
-    "monday": { "isOpen": true, "openTime": "08:00", "closeTime": "22:00" },
-    "tuesday": { "isOpen": true, "openTime": "08:00", "closeTime": "22:00" },
-    "wednesday": { "isOpen": true, "openTime": "08:00", "closeTime": "22:00" },
-    "thursday": { "isOpen": true, "openTime": "08:00", "closeTime": "22:00" },
-    "friday": { "isOpen": true, "openTime": "08:00", "closeTime": "23:00" },
-    "saturday": { "isOpen": true, "openTime": "09:00", "closeTime": "23:00" },
-    "sunday": { "isOpen": true, "openTime": "09:00", "closeTime": "22:00" }
+    "monday": { "isOpen": true, "openTime": "09:00", "closeTime": "21:00" },
+    "tuesday": { "isOpen": true, "openTime": "09:00", "closeTime": "21:00" },
+    "wednesday": { "isOpen": true, "openTime": "09:00", "closeTime": "21:00" },
+    "thursday": { "isOpen": true, "openTime": "09:00", "closeTime": "21:00" },
+    "friday": { "isOpen": true, "openTime": "09:00", "closeTime": "21:00" },
+    "saturday": { "isOpen": false },
+    "sunday": { "isOpen": false }
   },
-  "photos": [
-    "https://example.com/photos/cafe_front.jpg",
-    "https://example.com/photos/cafe_inside.jpg"
-  ]
+  "holidayDates": ["2025-10-02", "2025-12-25"],
+  "GST": ["33ABCDE1234F1Z5"],
+  "photos": ["https://cloudinary.com/image1.jpg"],
+  "verified": true,
+  "trustBadge": true
 }
+
+POST
+http://192.168.1.33:5000/business/login
+{
+  "email": "signup@stylehub.com",
+  "password": "StyleHub123"
+}
+
+
+POST
+http://192.168.1.33:5000/business/forgotPassword
+{
+  "email": "signup@stylehub.com"
+}
+
+
+POST
+http://192.168.1.33:5000/business/verifyOtp
+{
+  "email": "signup@stylehub.com",
+  "otp": "456789"
+}
+
+
+
 
 
 for getting ALL business

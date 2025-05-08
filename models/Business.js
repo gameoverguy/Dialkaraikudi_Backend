@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
 
 const businessSchema = new mongoose.Schema({
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Optional for admin-created businesses
-
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  otp: {
+    code: { type: String },
+    expiresAt: { type: Date },
+  },
   businessName: { type: String, required: true },
+  ownerName: { type: String, required: true },
   description: { type: String },
   category: {
     type: mongoose.Schema.Types.ObjectId,
@@ -13,10 +18,11 @@ const businessSchema = new mongoose.Schema({
 
   contactDetails: {
     phone: { type: String },
-    email: { type: String },
     website: { type: String },
     whatsapp: { type: String },
   },
+
+  isBlocked: { type: Boolean, default: false }, // Blocked by admin
 
   address: {
     addressArea: { type: String },
@@ -81,15 +87,13 @@ const businessSchema = new mongoose.Schema({
       documents: [String], // URLs of submitted verification docs
     },
   },
-  GST: [String],
-
+  GST: { type: String },
   photos: [String],
   ratings: { type: Number, default: 0 },
   reviewCount: { type: Number, default: 0 },
   verified: { type: Boolean, default: false },
   trustBadge: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
-  isApproved: { type: Boolean, default: true },
 });
 
 module.exports = mongoose.model("Business", businessSchema);
