@@ -52,7 +52,6 @@ app.use(
 // Import routers
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const vendorRoutes = require("./routes/vendorRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const businessRoutes = require("./routes/businessRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
@@ -62,7 +61,6 @@ const advertisementRoutes = require("./routes/advertisementRoutes");
 // Route Mounting
 app.use("/auth", authRoutes); // login
 app.use("/user", userRoutes); // signup, forgot-password, reset-password for users
-app.use("/vendor", vendorRoutes);
 app.use("/admin", adminRoutes); // forgot-password, reset-password for admins
 app.use("/business", businessRoutes); //business CRUD operations
 app.use("/reviews", reviewRoutes); //review and rating crud operations
