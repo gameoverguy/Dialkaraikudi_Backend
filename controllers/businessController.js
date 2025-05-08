@@ -293,24 +293,21 @@ exports.searchBusinesses = async (req, res) => {
     const { keyword } = req.params;
 
     if (!keyword) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Keyword is required" });
+      return res.status(400).json({
+        success: false,
+        message: "Keyword is required",
+      });
     }
 
     const filter = {
       $or: [
         { businessName: { $regex: keyword, $options: "i" } },
         { description: { $regex: keyword, $options: "i" } },
-        { category: { $regex: keyword, $options: "i" } },
         { "address.formattedAddress": { $regex: keyword, $options: "i" } },
       ],
     };
 
-    const businesses = await Business.find(filter).populate(
-      "category",
-      "displayName iconUrl"
-    );
+    const businesses = await Business.find(filter); // Removed populate
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
