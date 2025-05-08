@@ -166,12 +166,13 @@ exports.createBusiness = async (req, res) => {
   }
 };
 
-// Get All Businesses with Owner + Category populated
+// Get All Businesses + Category populated
 exports.getAllBusinesses = async (req, res) => {
   try {
-    const businesses = await Business.find()
-      .populate("owner", "name email")
-      .populate("category", "displayName iconUrl"); // ✨ populate category info
+    const businesses = await Business.find().populate(
+      "category",
+      "displayName iconUrl"
+    ); // ✨ populate category info
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
@@ -182,9 +183,10 @@ exports.getAllBusinesses = async (req, res) => {
 exports.getBusinessesByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params; // Use params instead of query
-    const businesses = await Business.find({ category: categoryId })
-      .populate("owner", "name email")
-      .populate("category", "displayName iconUrl");
+    const businesses = await Business.find({ category: categoryId }).populate(
+      "category",
+      "displayName iconUrl"
+    );
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
@@ -305,9 +307,10 @@ exports.searchBusinesses = async (req, res) => {
       ],
     };
 
-    const businesses = await Business.find(filter)
-      .populate("owner", "name email")
-      .populate("category", "displayName iconUrl");
+    const businesses = await Business.find(filter).populate(
+      "category",
+      "displayName iconUrl"
+    );
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
@@ -333,7 +336,7 @@ exports.bulkUploadBusinesses = async (req, res) => {
     };
 
     for (const b of businesses) {
-      const { businessName, category, owner } = b;
+      const { businessName, category } = b;
 
       if (!businessName || !category) {
         results.errors.push({
