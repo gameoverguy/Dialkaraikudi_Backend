@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 
-const mediaSchema = new mongoose.Schema({
+const adMedia = new mongoose.Schema({
+  description: { type: String, default: "" },
   url: { type: String, required: true },
   type: {
     type: String,
-    enum: ["image", "video", "html"],
+    enum: ["image", "video"],
     required: true,
   },
-  htmlContent: { type: String, default: "" }, // for type === 'html'
-  enabled: { type: Boolean, default: true },
-  priority: { type: Number, default: 1 }, // higher means more frequently shown
+  isActive: { type: Boolean, default: true },
+  priority: { type: Number, default: 1 },
 });
 
 const adSlotSchema = new mongoose.Schema({
