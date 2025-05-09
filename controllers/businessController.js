@@ -129,23 +129,34 @@ exports.verifyOtp = async (req, res) => {
 // Reset Password
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, newPassword, confirmPassword } = req.body;
+    const { email, newPassword, confirmPassword, otp } = req.body;
+
+    if (!email || !newPassword || !confirmPassword || !otp) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match." });
     }
 
     const business = await Business.findOne({ email });
-    if (!business)
+    if (!business) {
       return res.status(404).json({ message: "Business not found." });
-
-    if (!business.otp.code) {
-      return res
-        .status(400)
-        .json({ message: "OTP verification required before reset." });
     }
 
+    // Validate OTP
+    if (
+      !business.otp.code ||
+      business.otp.code !== otp ||
+      business.otp.expiresAt < new Date()
+    ) {
+      return res.status(400).json({ message: "Invalid or expired OTP." });
+    }
+
+    // Hash and update password
     business.password = await bcrypt.hash(newPassword, 10);
+
+    // Clear OTP
     business.otp = { code: null, expiresAt: null };
     await business.save();
 

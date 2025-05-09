@@ -64,6 +64,16 @@ http://192.168.1.33:5000/business/verifyOtp
 }
 
 
+POST
+http://192.168.1.33:5000/business/resetPassword
+{
+  "email": "signup@stylehub.com",
+  "otp": "456789",
+  "newPassword": "NewStyleHub@123"
+}
+
+
+
 
 
 

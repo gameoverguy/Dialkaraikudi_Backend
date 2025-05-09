@@ -7,6 +7,8 @@ router.post("/signup", businessController.businessSignup);
 router.post("/login", businessController.login);
 router.post("/forgotPassword", businessController.forgotPassword);
 router.post("/verifyOtp", businessController.verifyOtp);
+router.post("/resetPassword", businessController.resetPassword);
+
 router.get("/", businessController.getAllBusinesses);
 router.get("/:id", businessController.getBusinessById);
 router.put("/:id", businessController.updateBusiness);
