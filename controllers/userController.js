@@ -23,7 +23,7 @@ exports.loginUser = async (req, res) => {
         userType: user.userType,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "60s" }
     );
 
     // ✅ Set token in cookie
@@ -31,7 +31,8 @@ exports.loginUser = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Use true in production
       sameSite: "Strict", // or "Lax" depending on frontend/backend origin
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 60 * 1000, // 60,000 ms = 1 minute
+      // 7 days
     });
 
     res.status(200).json({
