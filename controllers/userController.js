@@ -7,19 +7,15 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found." });
 
-    // Check if user is blocked
     if (user.isBlocked)
       return res.status(403).json({ message: "Your account is blocked." });
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid password." });
 
-    // Generate JWT
     const token = jwt.sign(
       {
         userId: user._id,
@@ -30,10 +26,17 @@ exports.loginUser = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    // Send success response
+    // ✅ Set token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Use true in production
+      sameSite: "Strict", // or "Lax" depending on frontend/backend origin
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     res.status(200).json({
       message: "Login successful.",
-      token,
+      token, // optional: include for frontend convenience
       user: {
         id: user._id,
         name: user.name,

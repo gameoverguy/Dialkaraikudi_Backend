@@ -1,14 +1,29 @@
 const mongoose = require("mongoose");
 
 const businessSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  userType: {
+    type: String,
+    enum: ["business"],
+    default: "business",
+  },
   password: { type: String, required: true },
   otp: {
     code: { type: String },
     expiresAt: { type: Date },
   },
+
   businessName: { type: String, required: true },
   ownerName: { type: String, required: true },
+
+  isBlocked: { type: Boolean, default: false }, // Blocked by admin
+  logoUrl: { type: String },
   description: { type: String },
   category: {
     type: mongoose.Schema.Types.ObjectId,
@@ -21,8 +36,6 @@ const businessSchema = new mongoose.Schema({
     website: { type: String },
     whatsapp: { type: String },
   },
-
-  isBlocked: { type: Boolean, default: false }, // Blocked by admin
 
   address: {
     addressArea: { type: String },
