@@ -29,8 +29,8 @@ exports.loginUser = async (req, res) => {
     // ✅ Set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use true in production
-      sameSite: "Strict", // or "Lax" depending on frontend/backend origin
+      secure: true, // required for HTTPS
+      sameSite: "None", // allows cross-site
       maxAge: 60 * 1000, // 60,000 ms = 1 minute
       // 7 days
     });
