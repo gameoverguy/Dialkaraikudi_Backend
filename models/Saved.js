@@ -1,8 +1,13 @@
-const savedSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  business: { type: mongoose.Schema.Types.ObjectId, ref: "Business" },
-  type: { type: String, enum: ["saved", "favorite"], default: "saved" },
-  createdAt: { type: Date, default: Date.now },
-});
+const favouriteSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    business: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business",
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Saved", savedSchema);
+module.exports = mongoose.model("Favourite", favouriteSchema);
