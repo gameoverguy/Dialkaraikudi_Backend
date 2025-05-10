@@ -23,7 +23,7 @@ exports.loginUser = async (req, res) => {
         userType: user.userType,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "60s" }
+      { expiresIn: "5m" }
     );
 
     // ✅ Set token in cookie
@@ -31,8 +31,7 @@ exports.loginUser = async (req, res) => {
       httpOnly: true,
       secure: true, // required for HTTPS
       sameSite: "None", // allows cross-site
-      maxAge: 60 * 1000, // 60,000 ms = 1 minute
-      // 7 days
+      maxAge: 5 * 60 * 1000, // 5 minute
     });
 
     res.status(200).json({
