@@ -11,7 +11,11 @@ const verifyToken = async (req, res, next) => {
         ? authHeader.split(" ")[1]
         : null;
 
-    const token = req.cookies?.token || tokenFromHeader;
+    const token =
+      req.cookies?.userToken ||
+      req.cookies?.adminToken ||
+      req.cookies?.businessToken ||
+      tokenFromHeader;
 
     if (!token) {
       return res.status(401).json({ message: "Missing token" });

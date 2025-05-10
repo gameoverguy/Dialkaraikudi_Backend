@@ -50,11 +50,23 @@ exports.login = async (req, res) => {
       {
         businessId: business._id,
         email: business.email,
-        userType: "business",
+        userType: business.userType,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "5m" }
     );
+
+    res.clearCookie("userToken");
+    res.clearCookie("adminToken");
+    res.clearCookie("businessToken");
+
+    // ✅ Set token in cookie
+    res.cookie("businessToken", token, {
+      httpOnly: true,
+      secure: true, // required for HTTPS
+      sameSite: "None", // allows cross-site
+      maxAge: 5 * 60 * 1000, // 5 minute
+    });
 
     res.status(200).json({
       message: "Login successful.",
@@ -64,7 +76,7 @@ exports.login = async (req, res) => {
         name: business.name,
         email: business.email,
         phone: business.phone,
-        userType: "business",
+        userType: business.userType,
         avatarUrl: business.avatarUrl || null,
       },
     });

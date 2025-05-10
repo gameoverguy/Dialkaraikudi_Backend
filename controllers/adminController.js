@@ -29,11 +29,24 @@ exports.loginAdmin = async (req, res) => {
       {
         adminId: admin._id,
         email: admin.email,
+        userType: admin.userType,
         role: admin.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "5m" }
     );
+
+    res.clearCookie("userToken");
+    res.clearCookie("adminToken");
+    res.clearCookie("businessToken");
+
+    // ✅ Set token in cookie
+    res.cookie("adminToken", token, {
+      httpOnly: true,
+      secure: true, // required for HTTPS
+      sameSite: "None", // allows cross-site
+      maxAge: 5 * 60 * 1000, // 5 minute
+    });
 
     res.status(200).json({
       message: "Login successful.",
@@ -43,6 +56,7 @@ exports.loginAdmin = async (req, res) => {
         name: admin.name,
         email: admin.email,
         phone: admin.phone || null,
+        userType: admin.userType,
         role: admin.role,
         avatarUrl: admin.avatarUrl || null,
       },
