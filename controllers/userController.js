@@ -27,7 +27,7 @@ exports.loginUser = async (req, res) => {
     );
 
     // ✅ Set token in cookie
-    res.cookie("token", token, {
+    res.cookie("userToken", token, {
       httpOnly: true,
       secure: true, // required for HTTPS
       sameSite: "None", // allows cross-site
