@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
 
-const adSlotSchema = new mongoose.Schema(
+const advertSlotSchema = new mongoose.Schema(
   {
     name: { type: String, required: true }, // e.g., "Home_Top_Banner", "ListingPage_Sidebar"
-    page: { type: String, required: true }, // e.g., "Home", "ListingPage"
+    page: {
+      type: String,
+      enum: ["home", "listing", "businessdetails"], // add all used pages here
+      required: true,
+    },
     description: { type: String },
     slotType: { type: String, enum: ["Image", "Video"], required: true },
     isActive: { type: Boolean, default: true },
@@ -11,4 +15,4 @@ const adSlotSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("AdSlot", adSlotSchema);
+module.exports = mongoose.model("AdvertSlot", advertSlotSchema);
