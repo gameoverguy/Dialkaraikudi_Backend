@@ -4,16 +4,16 @@ const subscriptionSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      enum: ["Free", "Silver", "Gold", "Diamond", "Platinum"],
+      enum: ["Free", "Silver", "Gold", "Diamond", "Platinum"], // Restricts allowed names
       required: true,
-      default: true,
+      unique: true, // Ensures no duplicates in the DB — important if each name must be unique
+      default: "Free", // This must be one of the enum values (which it is)
     },
     price: { type: Number, required: true },
-    durationInDays: { type: Number, required: true }, // e.g., 30 for monthly
-    features: [String], // array of features this plan includes
+    durationInDays: { type: Number, required: true },
+    features: [String],
     isActive: { type: Boolean, default: true },
-    allowedSlots: [{ type: mongoose.Schema.Types.ObjectId, ref: "AdvertSlot" }], // for precise control
-    createdAt: { type: Date, default: Date.now },
+    allowedSlots: [{ type: mongoose.Schema.Types.ObjectId, ref: "AdvertSlot" }],
   },
   { timestamps: true }
 );

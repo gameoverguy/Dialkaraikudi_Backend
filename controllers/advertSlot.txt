@@ -1,0 +1,26 @@
+GET
+http://localhost:5000/advertslots
+
+POST
+http://localhost:5000/advertslots
+{
+  "name": "Home_Top_Banner",
+  "page": "home",
+  "description": "Top banner slot for homepage ads",
+  "slotType": "Image",
+  "isActive": true
+}
+{
+  "name": "Listing_Right_Sidebar",
+  "page": "listing",
+  "description": "Right sidebar on listing page",
+  "slotType": "Video",
+  "isActive": true
+}
+{
+  "name": "Business_Details_Bottom",
+  "page": "businessdetails",
+  "description": "Bottom slot on business details page",
+  "slotType": "Image",
+  "isActive": false
+}
