@@ -1,8 +1,15 @@
-const AdvertSlot = require("../models/advertSlot");
+const AdvertSlot = require("../models/AdvertSlot");
 
 // Create a new advert slot
 exports.createSlot = async (req, res) => {
   try {
+    const existing = await AdvertSlot.findOne({ name: req.body.name });
+    if (existing) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Slot name already exists" });
+    }
+
     const slot = await AdvertSlot.create(req.body);
     res.status(201).json({ success: true, data: slot });
   } catch (error) {
@@ -38,16 +45,32 @@ exports.getSlotById = async (req, res) => {
 // Update a slot
 exports.updateSlot = async (req, res) => {
   try {
+    const { name } = req.body;
+
+    if (name) {
+      const existing = await AdvertSlot.findOne({
+        name,
+        _id: { $ne: req.params.id }, // exclude current slot
+      });
+      if (existing) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Slot name already exists" });
+      }
+    }
+
     const updatedSlot = await AdvertSlot.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
+
     if (!updatedSlot) {
       return res
         .status(404)
         .json({ success: false, message: "Slot not found" });
     }
+
     res.status(200).json({ success: true, data: updatedSlot });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

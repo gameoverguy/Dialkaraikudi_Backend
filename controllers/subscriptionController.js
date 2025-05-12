@@ -55,6 +55,22 @@ exports.getSubscriptionById = async (req, res) => {
 // Update subscription by ID
 exports.updateSubscription = async (req, res) => {
   try {
+    const { name } = req.body;
+
+    if (name) {
+      // Check if another subscription with this name exists
+      const existing = await Subscription.findOne({
+        name,
+        _id: { $ne: req.params.id }, // exclude current one
+      });
+
+      if (existing) {
+        return res
+          .status(400)
+          .json({ success: false, error: "Subscription name already exists" });
+      }
+    }
+
     const subscription = await Subscription.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -72,6 +88,11 @@ exports.updateSubscription = async (req, res) => {
 
     res.status(200).json({ success: true, data: subscription });
   } catch (error) {
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Subscription name must be unique" });
+    }
     res.status(400).json({ success: false, error: error.message });
   }
 };
