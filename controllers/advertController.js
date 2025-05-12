@@ -57,3 +57,46 @@ exports.createAdvert = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Get all active ads grouped by slot for a specific page
+exports.getAdsByPage = async (req, res) => {
+  try {
+    const { page } = req.query;
+
+    if (!page) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Page is required" });
+    }
+
+    const slots = await AdvertSlot.find({ page, isActive: true });
+
+    const slotIds = slots.map((s) => s._id);
+
+    const today = new Date();
+
+    const ads = await Advert.find({
+      slot: { $in: slotIds },
+      isActive: true,
+      $or: [
+        { startDate: { $lte: today }, endDate: { $gte: today } },
+        { startDate: null, endDate: null },
+      ],
+    })
+      .populate("slot")
+      .populate("business", "name") // optional
+      .sort({ priority: -1 });
+
+    const grouped = {};
+    ads.forEach((ad) => {
+      const slotName = ad.slot.name;
+      if (!grouped[slotName]) grouped[slotName] = [];
+      grouped[slotName].push(ad);
+    });
+
+    res.status(200).json({ success: true, data: grouped });
+  } catch (err) {
+    console.error("Error getting ads by page:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

@@ -58,6 +58,7 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const advertSlotRoutes = require("./routes/advertSlotRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const advertRoutes = require("./routes/advert"); // adjust path if needed
 
 // Route Mounting
 app.use("/auth", authRoutes); // login
@@ -68,6 +69,7 @@ app.use("/reviews", reviewRoutes); //review and rating crud operations
 app.use("/categories", categoryRoutes); //category CRUD operations
 app.use("/advertslots", advertSlotRoutes);
 app.use("/subscriptions", subscriptionRoutes);
+app.use("/adverts", advertRoutes);
 
 // Example Home
 app.get("/", (req, res) => {

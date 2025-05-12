@@ -3,10 +3,12 @@ http://192.168.1.33:5000/subscriptions
 {
   "name": "Free",
   "price": 0,
-  "durationInDays": 30,
+  "durationInDays": 99999,
   "features": [
-    "Basic listing",
-    "No advertisement slot"
+    "Business shown in listings",
+    "Dashboard",
+    "Profile Management",
+    "Review Management"
   ],
   "allowedSlots": []
 }
