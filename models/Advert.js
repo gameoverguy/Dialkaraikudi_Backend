@@ -17,3 +17,5 @@ const advertSchema = new mongoose.Schema({
   startDate: { type: Date },
   endDate: { type: Date },
 });
+
+module.exports = mongoose.model("Advert", advertSchema);

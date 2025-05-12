@@ -248,48 +248,35 @@ exports.getBusinessById = async (req, res) => {
   }
 };
 
+// Update Business (Partial Update)
+// Update Business (Partial Update - Any Field)
 exports.updateBusiness = async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
   try {
-    const business = await Business.findById(req.params.id);
-    if (!business) {
+    const updatedBusiness = await Business.findByIdAndUpdate(id, updateData, {
+      new: true, // Return the updated document
+      runValidators: true, // Validate updates
+    });
+
+    if (!updatedBusiness) {
       return res
         .status(404)
         .json({ success: false, message: "Business not found" });
     }
 
-    // 🛠️ Add new photos
-    if (
-      req.body.addPhotos &&
-      Array.isArray(req.body.addPhotos) &&
-      req.body.addPhotos.length > 0
-    ) {
-      business.photos = [...business.photos, ...req.body.addPhotos];
-    }
-
-    // 🛠️ Remove specific photos
-    if (
-      req.body.removePhotos &&
-      Array.isArray(req.body.removePhotos) &&
-      req.body.removePhotos.length > 0
-    ) {
-      business.photos = business.photos.filter(
-        (photo) => !req.body.removePhotos.includes(photo)
-      );
-    }
-
-    // 🛠️ Update other fields (except photos separately)
-    Object.keys(req.body).forEach((key) => {
-      if (key !== "addPhotos" && key !== "removePhotos") {
-        business[key] = req.body[key];
-      }
+    return res.status(200).json({
+      success: true,
+      data: updatedBusiness,
     });
-
-    // 🛠️ Save changes
-    const updated = await business.save();
-
-    res.status(200).json({ success: true, data: updated });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message:
+        error.message || "Something went wrong while updating the business.",
+    });
   }
 };
 

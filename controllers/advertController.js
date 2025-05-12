@@ -5,8 +5,8 @@ const AdvertSlot = require("../models/AdvertSlot");
 
 exports.createAdvert = async (req, res) => {
   try {
-    const businessId = req.user.id; // assuming JWT middleware sets req.user
-    const { slotId, mediaUrl, type, priority, startDate, endDate } = req.body;
+    const { slotId, mediaUrl, type, priority, startDate, endDate, businessId } =
+      req.body;
 
     // 1. Get the business and populate its subscription
     const business = await Business.findById(businessId).populate({
