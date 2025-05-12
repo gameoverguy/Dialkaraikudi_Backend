@@ -3,6 +3,7 @@ const Review = require("../models/Review");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
+const Subscription = require("../models/Subscription");
 
 // Business Signup (Simplified)
 exports.businessSignup = async (req, res) => {
@@ -248,7 +249,6 @@ exports.getBusinessById = async (req, res) => {
   }
 };
 
-// Update Business (Partial Update)
 // Update Business (Partial Update - Any Field)
 exports.updateBusiness = async (req, res) => {
   const { id } = req.params;
@@ -377,5 +377,50 @@ exports.bulkUploadBusinesses = async (req, res) => {
     res.status(201).json({ success: true, result: results });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.changeSubscription = async (req, res) => {
+  try {
+    const { businessId, newSubscriptionId } = req.body;
+
+    if (!businessId || !newSubscriptionId) {
+      return res
+        .status(400)
+        .json({ message: "businessId and newSubscriptionId are required." });
+    }
+
+    const business = await Business.findById(businessId);
+    if (!business) {
+      return res.status(404).json({ message: "Business not found." });
+    }
+
+    const newPlan = await Subscription.findById(newSubscriptionId);
+    if (!newPlan || !newPlan.isActive) {
+      return res
+        .status(404)
+        .json({ message: "New subscription plan not found or inactive." });
+    }
+
+    const now = new Date();
+    const expiresAt = new Date(now);
+    expiresAt.setDate(expiresAt.getDate() + newPlan.durationInDays);
+
+    business.subscription = {
+      currentPlan: newPlan._id,
+      subscribedAt: now,
+      expiresAt,
+      isActive: true,
+    };
+
+    await business.save();
+
+    return res.status(200).json({
+      message: "Subscription updated successfully.",
+      subscription: business.subscription,
+    });
+  } catch (error) {
+    console.error("Error changing subscription:", error);
+    return res.status(500).json({ message: "Server error." });
   }
 };

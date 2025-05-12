@@ -5,11 +5,15 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const deactivateExpiredSubscriptions = require("./cron_jobs/deactivateExpiredSubscriptions");
 
 dotenv.config();
 connectDB(); // MongoDB connection
 
 const app = express();
+
+// Start cron job
+deactivateExpiredSubscriptions();
 
 // Allowed frontend origins
 const allowedOrigins = [
@@ -18,6 +22,7 @@ const allowedOrigins = [
   "http://192.168.1.13:5173",
   "http://192.168.1.12:5173",
   "http://192.168.1.9:5173",
+  "http://192.168.1.37:5173",
   "https://lucky-choux-a6d99e.netlify.app",
 ];
 
