@@ -1,4 +1,5 @@
-// models/Ad.js
+const mongoose = require("mongoose");
+
 const advertSchema = new mongoose.Schema({
   business: {
     type: mongoose.Schema.Types.ObjectId,

@@ -58,7 +58,7 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const advertSlotRoutes = require("./routes/advertSlotRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
-const advertRoutes = require("./routes/advert"); // adjust path if needed
+const advertRoutes = require("./routes/advertRoutes"); // adjust path if needed
 
 // Route Mounting
 app.use("/auth", authRoutes); // login
