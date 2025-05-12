@@ -1,5 +1,5 @@
 const cron = require("node-cron");
-const Business = require("../models/business");
+const Business = require("../models/Business");
 
 const deactivateExpiredSubscriptions = () => {
   cron.schedule("0 0 * * *", async () => {
