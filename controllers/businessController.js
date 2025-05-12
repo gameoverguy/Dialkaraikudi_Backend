@@ -57,9 +57,9 @@ exports.login = async (req, res) => {
       { expiresIn: "5m" }
     );
 
-    res.clearCookie("userToken");
-    res.clearCookie("adminToken");
-    res.clearCookie("businessToken");
+    // res.clearCookie("userToken");
+    // res.clearCookie("adminToken");
+    // res.clearCookie("businessToken");
 
     // ✅ Set token in cookie
     res.cookie("businessToken", token, {

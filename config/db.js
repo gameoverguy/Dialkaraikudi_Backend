@@ -9,7 +9,7 @@ const connectDB = async () => {
         tls: true,
       })
       .then(() => console.log("MongoDB connected"))
-      .catch((err) => console.error("MongoDB error:", err));
+      .catch((err) => console.error("MongoDBf    error:", err));
     //console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error("MongoDB connection failed", error);
