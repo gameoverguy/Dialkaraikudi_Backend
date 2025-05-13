@@ -43,10 +43,10 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Token verification error:", error.message);
-    res.clearCookie("userToken");
-    res.clearCookie("adminToken");
-    res.clearCookie("businessToken");
-    return res.status(403).json({ message: "Invalid or expired token" });
+    CommonController.logout();
+    return res
+      .status(403)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };
 
