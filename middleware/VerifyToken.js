@@ -18,6 +18,9 @@ const verifyToken = async (req, res, next) => {
       tokenFromHeader;
 
     if (!token) {
+      res.clearCookie("userToken");
+      res.clearCookie("adminToken");
+      res.clearCookie("businessToken");
       return res.status(401).json({ message: "Missing token" });
     }
 
@@ -41,6 +44,9 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Token verification error:", error.message);
+    res.clearCookie("userToken");
+    res.clearCookie("adminToken");
+    res.clearCookie("businessToken");
     return res.status(403).json({ message: "Invalid or expired token" });
   }
 };

@@ -55,7 +55,7 @@ app.use(
 );
 
 // Import routers
-const authRoutes = require("./routes/authRoutes");
+const authenticationRoutes = require("./routes/authenticationRoutes");
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const businessRoutes = require("./routes/businessRoutes");
@@ -66,7 +66,7 @@ const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const advertRoutes = require("./routes/advertRoutes"); // adjust path if needed
 
 // Route Mounting
-app.use("/auth", authRoutes); // login
+app.use("/authentication", authenticationRoutes); // login
 app.use("/user", userRoutes); // signup, forgot-password, reset-password for users
 app.use("/admin", adminRoutes); // forgot-password, reset-password for admins
 app.use("/business", businessRoutes); //business CRUD operations
