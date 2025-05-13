@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Business = require("../models/Business");
 const Admin = require("../models/Admin");
+const CommonController = require("../utils/CommonController");
 
 const verifyToken = async (req, res, next) => {
   try {
@@ -18,9 +19,7 @@ const verifyToken = async (req, res, next) => {
       tokenFromHeader;
 
     if (!token) {
-      res.clearCookie("userToken");
-      res.clearCookie("adminToken");
-      res.clearCookie("businessToken");
+      CommonController.logout();
       return res.status(401).json({ success: false, message: "Missing token" });
     }
 
