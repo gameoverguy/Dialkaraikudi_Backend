@@ -23,7 +23,6 @@ exports.loginAdmin = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password." });
     }
-    console.log("test");
 
     const token = jwt.sign(
       {
