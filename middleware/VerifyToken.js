@@ -21,7 +21,7 @@ const verifyToken = async (req, res, next) => {
       res.clearCookie("userToken");
       res.clearCookie("adminToken");
       res.clearCookie("businessToken");
-      return res.status(401).json({ message: "Missing token" });
+      return res.status(401).json({ success: false, message: "Missing token" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
