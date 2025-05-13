@@ -19,7 +19,7 @@ const verifyToken = async (req, res, next) => {
       tokenFromHeader;
 
     if (!token) {
-      CommonController.logout();
+      CommonController.logout(req, res);
       return res.status(401).json({ success: false, message: "Missing token" });
     }
 
@@ -43,7 +43,7 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Token verification error:", error.message);
-    CommonController.logout();
+    CommonController.logout(req, res);
     return res
       .status(403)
       .json({ success: false, message: "Invalid or expired token" });
