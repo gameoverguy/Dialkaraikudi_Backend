@@ -1,6 +1,6 @@
 const clearAuthCookies = (
   res,
-  tokens = [userToken, businessToken, adminToken]
+  tokens = ["userToken", "businessToken", "adminToken"]
 ) => {
   tokens.forEach((tokenName) => {
     res.clearCookie(tokenName, {
