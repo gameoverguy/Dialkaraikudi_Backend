@@ -74,11 +74,11 @@ exports.login = async (req, res) => {
       token,
       business: {
         id: business._id,
-        name: business.name,
+        name: business.businessName,
         email: business.email,
-        phone: business.phone,
+        phone: business.contactDetails.phone,
         userType: business.userType,
-        avatarUrl: business.avatarUrl || null,
+        logoUrl: business.logoUrl || null,
       },
     });
   } catch (error) {
