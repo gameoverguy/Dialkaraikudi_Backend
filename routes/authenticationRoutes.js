@@ -7,6 +7,4 @@ router.post("/verifyToken", verifyToken, (req, res) => {
   res.json({ success: true, message: "Token works i guess !!" });
 });
 
-//router.post("/logout", Logout);
-
 module.exports = router;

@@ -1,10 +1,10 @@
-const clearAuthCookies = require("../utils/clearAuthCookies");
+// utils/CommonController.js
+const clearAuthCookies = require("./clearAuthCookies");
 
 exports.logout = (req, res) => {
   try {
-    clearAuthCookies(res); // Clears all tokens by default
-    res.status(200).json({ message: "Logout successful." });
+    clearAuthCookies(res); // Only clears cookies
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Logout error:", error.message);
   }
 };
