@@ -8,7 +8,7 @@ router.post("/logout", CommonController.logout);
 
 // routes/auth.js or routes/user.js
 router.get("/verifytoken", verifyToken, (req, res) => {
-  res.status(200).json({ success: true, message: "Token is valid" });
+  res.status(200).json({ isTokenValid: true, message: "Token is valid" });
 });
 
 module.exports = router;

@@ -38,7 +38,7 @@ const verifyToken = async (req, res, next) => {
       });
       return res
         .status(401)
-        .json({ success: false, message: "Token missing or expired." });
+        .json({ isTokenValid: false, message: "Token missing or expired." });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -64,7 +64,7 @@ const verifyToken = async (req, res, next) => {
     CommonController.logout(req, res);
     return res
       .status(403)
-      .json({ success: false, message: "Invalid or expired token" });
+      .json({ isTokenValid: false, message: "Invalid or expired token" });
   }
 };
 
