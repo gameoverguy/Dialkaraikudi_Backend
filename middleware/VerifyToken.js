@@ -19,8 +19,26 @@ const verifyToken = async (req, res, next) => {
       tokenFromHeader;
 
     if (!token) {
-      CommonController.logout(req, res);
-      return res.status(401).json({ success: false, message: "Missing token" });
+      res.clearCookie("userToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      });
+
+      res.clearCookie("adminToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      });
+
+      res.clearCookie("businessToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      });
+      return res
+        .status(401)
+        .json({ success: false, message: "Token missing or expired." });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

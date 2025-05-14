@@ -1,10 +1,25 @@
-// utils/CommonController.js
-const clearAuthCookies = require("./clearAuthCookies");
-
 exports.logout = (req, res) => {
   try {
-    clearAuthCookies(res); // Only clears cookies
+    res.clearCookie("userToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
+
+    res.clearCookie("adminToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
+
+    res.clearCookie("businessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
+
+    res.status(200).json({ success: true, message: "Logged out manually." });
   } catch (error) {
-    console.error("Logout error:", error.message);
+    res.status(500).json({ success: false, message: "Logout failed." });
   }
 };
