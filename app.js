@@ -76,7 +76,7 @@ app.use("/categories", categoryRoutes); //category CRUD operations
 app.use("/advertslots", advertSlotRoutes);
 app.use("/subscriptions", subscriptionRoutes);
 app.use("/adverts", advertRoutes);
-app.use("favourites", favouriteRoutes);
+app.use("/favourites", favouriteRoutes);
 
 // Example Home
 app.get("/", (req, res) => {
