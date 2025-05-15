@@ -15,7 +15,7 @@ const {
   getAdsBySlot,
   getAdsByBusiness,
   getAllAds,
-} = require("../controllers/adController");
+} = require("../controllers/advertController");
 
 // ----- Advert Slot Routes -----
 router.post("/slots", createAdvertSlot);
