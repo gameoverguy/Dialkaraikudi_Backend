@@ -64,6 +64,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const advertSlotRoutes = require("./routes/advertSlotRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const advertRoutes = require("./routes/advertRoutes"); // adjust path if needed
+const favouriteRoutes = require("./routes/favouriteRoutes");
 
 // Route Mounting
 app.use("/authentication", authenticationRoutes); // login
@@ -75,6 +76,7 @@ app.use("/categories", categoryRoutes); //category CRUD operations
 app.use("/advertslots", advertSlotRoutes);
 app.use("/subscriptions", subscriptionRoutes);
 app.use("/adverts", advertRoutes);
+app.use("favourites", favouriteRoutes);
 
 // Example Home
 app.get("/", (req, res) => {
