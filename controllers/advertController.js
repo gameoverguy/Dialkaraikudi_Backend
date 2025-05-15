@@ -1,4 +1,4 @@
-const Ad = require("../models/Ad");
+const Ad = require("../models/Advert");
 const AdvertSlot = require("../models/AdvertSlot");
 const Business = require("../models/Business");
 
