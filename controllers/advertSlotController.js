@@ -1,7 +1,7 @@
 const AdvertSlot = require("../models/AdvertSlot");
 
 // Create a new advert slot
-exports.createSlot = async (req, res) => {
+exports.createAdvertSlot = async (req, res) => {
   try {
     const slot = await AdvertSlot.create(req.body);
     res.status(201).json(slot);
@@ -11,7 +11,7 @@ exports.createSlot = async (req, res) => {
 };
 
 // Update an advert slot
-exports.updateSlot = async (req, res) => {
+exports.updateAdvertSlot = async (req, res) => {
   try {
     const updated = await AdvertSlot.findByIdAndUpdate(
       req.params.id,
@@ -26,7 +26,7 @@ exports.updateSlot = async (req, res) => {
 };
 
 // Delete an advert slot
-exports.deleteSlot = async (req, res) => {
+exports.deleteAdvertSlot = async (req, res) => {
   try {
     const deleted = await AdvertSlot.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Slot not found" });
@@ -37,7 +37,7 @@ exports.deleteSlot = async (req, res) => {
 };
 
 // Get all slots
-exports.getAllSlots = async (req, res) => {
+exports.getAllAdvertSlots = async (req, res) => {
   try {
     const slots = await AdvertSlot.find().populate("allowedBusinesses");
     res.json(slots);
