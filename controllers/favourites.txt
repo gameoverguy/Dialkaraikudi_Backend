@@ -1,0 +1,24 @@
+GET /favourites/check?user=123&business=456
+
+Response:
+{ "success": true, "favourited": true }
+
+
+POST /favourites/remove
+Body:
+{
+  "user": "123",
+  "business": "456"
+}
+
+
+POST /favourites/add
+Body:
+{
+  "user": "123",
+  "business": "456"
+}
+
+GET /favourites/user?user=USER_ID_HERE
+
+the response will be all the business favoured by that user
