@@ -3,93 +3,45 @@ const AdvertSlot = require("../models/AdvertSlot");
 // Create a new advert slot
 exports.createSlot = async (req, res) => {
   try {
-    const existing = await AdvertSlot.findOne({ name: req.body.name });
-    if (existing) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Slot name already exists" });
-    }
-
     const slot = await AdvertSlot.create(req.body);
-    res.status(201).json({ success: true, data: slot });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(201).json(slot);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
-// Get all advert slots
-exports.getAllSlots = async (req, res) => {
-  try {
-    const slots = await AdvertSlot.find().sort({ createdAt: -1 });
-    res.status(200).json({ success: true, data: slots });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// Get a single slot by ID
-exports.getSlotById = async (req, res) => {
-  try {
-    const slot = await AdvertSlot.findById(req.params.id);
-    if (!slot) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Slot not found" });
-    }
-    res.status(200).json({ success: true, data: slot });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// Update a slot
+// Update an advert slot
 exports.updateSlot = async (req, res) => {
   try {
-    const { name } = req.body;
-
-    if (name) {
-      const existing = await AdvertSlot.findOne({
-        name,
-        _id: { $ne: req.params.id }, // exclude current slot
-      });
-      if (existing) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Slot name already exists" });
-      }
-    }
-
-    const updatedSlot = await AdvertSlot.findByIdAndUpdate(
+    const updated = await AdvertSlot.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { new: true }
     );
-
-    if (!updatedSlot) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Slot not found" });
-    }
-
-    res.status(200).json({ success: true, data: updatedSlot });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    if (!updated) return res.status(404).json({ message: "Slot not found" });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
-// Delete a slot
+// Delete an advert slot
 exports.deleteSlot = async (req, res) => {
   try {
-    const deletedSlot = await AdvertSlot.findByIdAndDelete(req.params.id);
-    if (!deletedSlot) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Slot not found" });
-    }
-    res
-      .status(200)
-      .json({ success: true, message: "Slot deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    const deleted = await AdvertSlot.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Slot not found" });
+    res.json({ message: "Slot deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get all slots
+exports.getAllSlots = async (req, res) => {
+  try {
+    const slots = await AdvertSlot.find().populate("allowedBusinesses");
+    res.json(slots);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

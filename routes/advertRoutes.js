@@ -1,11 +1,34 @@
 const express = require("express");
 const router = express.Router();
-const advertController = require("../controllers/advertController"); // adjust path if needed
 
-// Create a new advert (only for authenticated businesses)
-router.post("/", advertController.createAdvert);
+const {
+  createAdvertSlot,
+  updateAdvertSlot,
+  deleteAdvertSlot,
+  getAllAdvertSlots,
+} = require("../controllers/advertSlotController");
 
-// Get all ads by page (public route for frontend to load ads on pages like home, listing, etc.)
-router.get("/adsbypage", advertController.getAdsByPage);
+const {
+  createAd,
+  updateAd,
+  deleteAd,
+  getAdsBySlot,
+  getAdsByBusiness,
+  getAllAds,
+} = require("../controllers/adController");
+
+// ----- Advert Slot Routes -----
+router.post("/slots", createAdvertSlot);
+router.put("/slots/:id", updateAdvertSlot);
+router.delete("/slots/:id", deleteAdvertSlot);
+router.get("/slots", getAllAdvertSlots);
+
+// ----- Ad Routes -----
+router.post("/", createAd);
+router.put("/:id", updateAd);
+router.delete("/:id", deleteAd);
+router.get("/", getAllAds);
+router.get("/slot/:slotId", getAdsBySlot);
+router.get("/business/:businessId", getAdsByBusiness);
 
 module.exports = router;

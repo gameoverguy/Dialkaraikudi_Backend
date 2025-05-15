@@ -15,6 +15,9 @@ const app = express();
 // Start cron job
 deactivateExpiredSubscriptions();
 
+// ✅ Load the cron job
+require("./cron/expireAds");
+
 // Allowed frontend origins
 const allowedOrigins = [
   "http://localhost:5173",

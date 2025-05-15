@@ -1,21 +1,40 @@
 const mongoose = require("mongoose");
 
-const advertSchema = new mongoose.Schema({
-  business: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Business",
-    required: true,
+const adSchema = new mongoose.Schema(
+  {
+    slotId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AdvertSlot",
+      required: true,
+    },
+    businessId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business",
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: ["Image", "Video"],
+      required: true,
+    },
+    contentUrl: {
+      type: String,
+      required: true, // Cloudinary URL or embedded HTML
+    },
+    priority: {
+      type: Number,
+      default: 1,
+    },
+    startDate: {
+      type: Date,
+      default: Date.now,
+    },
+    endDate: {
+      type: Date,
+    },
+    isActive: { type: Boolean, default: true },
   },
-  slot: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "AdvertSlot",
-    required: true,
-  },
-  mediaUrl: { type: String },
-  priority: { type: Number, default: 1 },
-  isActive: { type: Boolean, default: true },
-  startDate: { type: Date },
-  endDate: { type: Date },
-});
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Advert", advertSchema);
+module.exports = mongoose.model("Ad", adSchema);
