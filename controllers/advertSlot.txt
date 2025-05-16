@@ -50,8 +50,8 @@ json
 Copy
 Edit
 {
-  "slotId": "6645f2270dc2c15f10c93325",
-  "businessId": "6645f0d5f86a9cc110e758de"
+  "slotId": "68272304a39a0b67b455e66c",
+  "businessId": "6811ce00a36698b853a8d69a"
 }
 🔹 Remove Business from Advert Slot
 URL:
