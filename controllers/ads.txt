@@ -1,56 +1,43 @@
-Add/Update a Slot in a Page
-http://192.168.1.33:5000/ads/pages/home/slots
-POST
+🔹 Create a New Ad
+URL:
+POST http://localhost:5000/adverts
+Body:
+
+json
+Copy
+Edit
 {
-  "slot": "top_banner",
-  "isSlider": true
+  "slotId": "6645f2270dc2c15f10c93325",
+  "businessId": "6645f0d5f86a9cc110e758de",
+  "type": "Image",
+  "contentUrl": "https://res.cloudinary.com/demo/image/upload/v123456789/sample.jpg",
+  "description": "Summer Sale Banner",
+  "priority": 1,
+  "startDate": "2025-05-20T00:00:00.000Z"
 }
+🔹 Get All Ads (Optionally by Slot or Business)
+URL:
+GET http://localhost:5000/adverts
+Optional Filters:
+?slotId=6645f2270dc2c15f10c93325&businessId=6645f0d5f86a9cc110e758de
 
+🔹 Update an Ad by ID
+URL:
+PUT http://localhost:5000/adverts/:id
+Body:
 
-Add an Ad to a Slot
-http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads
-POST
+json
+Copy
+Edit
 {
-  "type": "image",
-  "mediaUrl": "https://example.com/banner1.jpg",
-  "link": "https://your-link.com",
-  "isActive": true,
-  "sortOrder": 1
+  "description": "Updated Ad Text",
+  "priority": 2,
+  "contentUrl": "https://res.cloudinary.com/demo/image/upload/v123456789/updated_ad.jpg"
 }
+🔹 Delete an Ad by ID
+URL:
+DELETE http://localhost:5000/adverts/:id
 
-Add a Video Ad
-http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads
-POST
-{
-  "type": "video",
-  "mediaUrl": "https://example.com/ad-video.mp4",
-  "link": "https://video-click-link.com",
-  "isActive": true,
-  "sortOrder": 2
-}
-
-Add a html Ad
-http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads
-POST
-{
-  "type": "html",
-  "htmlContent": "<div style='background:red;color:white;'>Special Offer!</div>",
-  "link": "https://html-ad-link.com",
-  "isActive": true,
-  "sortOrder": 3
-}
-
-Update an Existing Ad
-http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads/{adId}
-PUT
-{
-  "link": "https://updated-link.com",
-  "isActive": false
-}
-
-Delete an Ad
-http://192.168.1.33:5000/ads/pages/home/slots/top_banner/ads/{adId}
-
-
-Delete an Ad slot
-http://192.168.1.33:5000/ads/pages/home/slots/top_banner
+🔹 Toggle Ad Active/Inactive
+URL:
+PATCH http://localhost:5000/adverts/toggle/:id

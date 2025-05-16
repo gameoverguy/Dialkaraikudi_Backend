@@ -1,26 +1,68 @@
-GET
-http://localhost:5000/advertslots
+🔹 Create a New Advert Slot
+URL:
+POST http://localhost:5000/advertslots
+Body:
 
-POST
-http://localhost:5000/advertslots
+json
+Copy
+Edit
 {
-  "name": "Home_Top_Banner",
+  "name": "Home Top Banner",
+  "description": "Top banner for homepage",
   "page": "home",
-  "description": "Top banner slot for homepage ads",
   "slotType": "Image",
-  "isActive": true
+  "adDurationInDays": 30,
+  "maxAds": 5,
+  "interval": 3000,
+  "allowedBusinesses": ["6645f0d5f86a9cc110e758de"]
 }
+🔹 Get All Advert Slots (optional filters)
+URL:
+GET http://localhost:5000/advertslots
+With filters (example):
+GET http://localhost:5000/advertslots?page=home&isActive=true
+
+🔹 Get a Single Advert Slot by ID
+URL:
+GET http://localhost:5000/advertslots/:id
+
+🔹 Update an Advert Slot by ID
+URL:
+PUT http://localhost:5000/advertslots/:id
+Body:
+
+json
+Copy
+Edit
 {
-  "name": "Listing_Right_Sidebar",
-  "page": "listing",
-  "description": "Right sidebar on listing page",
-  "slotType": "Video",
-  "isActive": true
-}
-{
-  "name": "Business_Details_Bottom",
-  "page": "businessdetails",
-  "description": "Bottom slot on business details page",
-  "slotType": "Image",
+  "description": "Updated description for the top banner",
   "isActive": false
+}
+🔹 Delete an Advert Slot by ID
+URL:
+DELETE http://localhost:5000/advertslots/:id
+
+🔹 Assign Business to Advert Slot
+URL:
+POST http://localhost:5000/advertslots/assignbusiness
+Body:
+
+json
+Copy
+Edit
+{
+  "slotId": "6645f2270dc2c15f10c93325",
+  "businessId": "6645f0d5f86a9cc110e758de"
+}
+🔹 Remove Business from Advert Slot
+URL:
+POST http://localhost:5000/advertslots/removebusiness
+Body:
+
+json
+Copy
+Edit
+{
+  "slotId": "6645f2270dc2c15f10c93325",
+  "businessId": "6645f0d5f86a9cc110e758de"
 }

@@ -5,18 +5,14 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-const deactivateExpiredSubscriptions = require("./cron_jobs/deactivateExpiredSubscriptions");
 
 dotenv.config();
 connectDB(); // MongoDB connection
 
 const app = express();
 
-// Start cron job
-deactivateExpiredSubscriptions();
-
 // ✅ Load the cron job
-//require("./cron_jobs/expireAds");
+require("./cron_jobs/expireAds");
 
 // Allowed frontend origins
 const allowedOrigins = [
@@ -64,9 +60,8 @@ const adminRoutes = require("./routes/adminRoutes");
 const businessRoutes = require("./routes/businessRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
-//const advertSlotRoutes = require("./routes/advertSlotRoutes");
-const subscriptionRoutes = require("./routes/subscriptionRoutes");
-//const advertRoutes = require("./routes/advertRoutes"); // adjust path if needed
+const advertSlotRoutes = require("./routes/advertSlotRoutes");
+const advertRoutes = require("./routes/advertRoutes");
 const favouriteRoutes = require("./routes/favouriteRoutes");
 
 // Route Mounting
@@ -76,9 +71,8 @@ app.use("/admin", adminRoutes); // forgot-password, reset-password for admins
 app.use("/business", businessRoutes); //business CRUD operations
 app.use("/reviews", reviewRoutes); //review and rating crud operations
 app.use("/categories", categoryRoutes); //category CRUD operations
-//app.use("/advertslots", advertSlotRoutes);
-//app.use("/subscriptions", subscriptionRoutes);
-//app.use("/adverts", advertRoutes);
+app.use("/advertslots", advertSlotRoutes);
+app.use("/adverts", advertRoutes);
 app.use("/favourites", favouriteRoutes);
 
 // Example Home

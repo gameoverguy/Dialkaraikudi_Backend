@@ -2,13 +2,18 @@ const mongoose = require("mongoose");
 
 const advertSlotSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true, unique: true, trim: true },
     description: { type: String },
     page: {
       type: String,
       enum: ["home", "businesslisting", "businessdetails"], // add all used pages here
       required: true,
     },
+    adDurationInDays: {
+      type: Number,
+      default: 30,
+    },
+
     slotType: { type: String, enum: ["Image", "Video"], required: true },
     allowedBusinesses: [
       {
@@ -25,7 +30,7 @@ const advertSlotSchema = new mongoose.Schema(
       default: 5000, // in ms, used for image sliders
     },
 
-    isActive: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

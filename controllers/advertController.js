@@ -1,108 +1,115 @@
-// const Ad = require("../models/Advert");
-// const AdvertSlot = require("../models/AdvertSlot");
-// const Business = require("../models/Business");
+const Ad = require("../models/Advert");
+const AdvertSlot = require("../models/AdvertSlot");
+const Business = require("../models/Business");
 
-// // 1. Create Ad
-// exports.createAd = async (req, res) => {
-//   try {
-//     const slot = await AdvertSlot.findById(req.body.slotId);
-//     if (!slot) return res.status(404).json({ message: "Slot not found" });
+// 1. Create Ad
+exports.createAd = async (req, res) => {
+  try {
+    const {
+      slotId,
+      businessId,
+      type,
+      contentUrl,
+      description,
+      priority,
+      startDate,
+    } = req.body;
 
-//     if (!slot.allowedBusinesses.includes(req.body.businessId)) {
-//       return res
-//         .status(403)
-//         .json({ message: "Business not allowed for this slot" });
-//     }
+    const slot = await AdvertSlot.findById(slotId);
+    if (!slot)
+      return res.status(404).json({ message: "Advert slot not found" });
 
-//     const adCount = await Ad.countDocuments({
-//       slotId: req.body.slotId,
-//       isActive: true,
-//     });
-//     if (adCount >= slot.maxAds) {
-//       return res.status(400).json({ message: "Max ads reached for this slot" });
-//     }
+    // Check if business is allowed for this slot
+    if (!slot.allowedBusinesses.includes(businessId)) {
+      return res
+        .status(403)
+        .json({ message: "Business not allowed for this slot" });
+    }
 
-//     const ad = await Ad.create(req.body);
+    // Check max ads for this slot
+    const activeAdCount = await Ad.countDocuments({ slotId, isActive: true });
+    if (activeAdCount >= slot.maxAds) {
+      return res.status(400).json({ message: "Max ads reached for this slot" });
+    }
 
-//     res.status(201).json(ad);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    // Calculate endDate using adDurationInDays from slot
+    const start = startDate ? new Date(startDate) : new Date();
+    const end = new Date(start);
+    end.setDate(end.getDate() + (slot.adDurationInDays || 30)); // fallback to 30 if not set
 
-// // 2. Get Ads (all, by slot, by business)
-// exports.getAds = async (req, res) => {
-//   try {
-//     const { slotId, businessId } = req.query;
+    const newAd = await Ad.create({
+      slotId,
+      businessId,
+      type,
+      contentUrl,
+      description,
+      priority,
+      startDate: start,
+      endDate: end,
+    });
 
-//     let filter = {};
-//     if (slotId) filter.slotId = slotId;
-//     if (businessId) filter.businessId = businessId;
+    res.status(201).json(newAd);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//     const ads = await Ad.find(filter)
-//       .populate("slotId", "name page")
-//       .populate("businessId", "businessName");
+// 2. Get Ads (all / filter by slotId or businessId)
+exports.getAds = async (req, res) => {
+  try {
+    const { slotId, businessId } = req.query;
+    const filter = {};
+    if (slotId) filter.slotId = slotId;
+    if (businessId) filter.businessId = businessId;
 
-//     res.json(ads);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    const ads = await Ad.find(filter)
+      .populate("slotId", "name page")
+      .populate("businessId", "businessName");
 
-// // 3. Update Ad
-// exports.updateAd = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const updated = await Ad.findByIdAndUpdate(id, req.body, { new: true });
-//     if (!updated) return res.status(404).json({ message: "Ad not found" });
+    res.json(ads);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//     res.json(updated);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+// 3. Update Ad
+exports.updateAd = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedAd = await Ad.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updatedAd) return res.status(404).json({ message: "Ad not found" });
 
-// // 4. Delete Ad
-// exports.deleteAd = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const deleted = await Ad.findByIdAndDelete(id);
-//     if (!deleted) return res.status(404).json({ message: "Ad not found" });
+    res.json(updatedAd);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//     res.json({ message: "Ad deleted successfully" });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+// 4. Delete Ad
+exports.deleteAd = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedAd = await Ad.findByIdAndDelete(id);
+    if (!deletedAd) return res.status(404).json({ message: "Ad not found" });
 
-// // 5. Get Allowed Slots for a Business
-// exports.getAllowedSlotsForBusiness = async (req, res) => {
-//   try {
-//     const { businessId } = req.params;
+    res.json({ message: "Ad deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//     const slots = await AdvertSlot.find({ allowedBusinesses: businessId });
+// 5. Toggle Ad Active Status
+exports.toggleAdStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const ad = await Ad.findById(id);
+    if (!ad) return res.status(404).json({ message: "Ad not found" });
 
-//     res.json(slots);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    ad.isActive = !ad.isActive;
+    await ad.save();
 
-// // 6. Admin - Assign business to slot
-// exports.assignBusinessToSlot = async (req, res) => {
-//   try {
-//     const { slotId, businessId } = req.body;
-
-//     const slot = await AdvertSlot.findById(slotId);
-//     if (!slot) return res.status(404).json({ message: "Slot not found" });
-
-//     if (!slot.allowedBusinesses.includes(businessId)) {
-//       slot.allowedBusinesses.push(businessId);
-//       await slot.save();
-//     }
-
-//     res.json({ message: "Business assigned to slot successfully", slot });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    res.json({ message: `Ad ${ad.isActive ? "activated" : "deactivated"}` });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -7,6 +7,7 @@ const adSchema = new mongoose.Schema(
       ref: "AdvertSlot",
       required: true,
     },
+    description: { type: String },
     businessId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Business",
@@ -19,7 +20,7 @@ const adSchema = new mongoose.Schema(
     },
     contentUrl: {
       type: String,
-      required: true, // Cloudinary URL or embedded HTML
+      required: true,
     },
     priority: {
       type: Number,

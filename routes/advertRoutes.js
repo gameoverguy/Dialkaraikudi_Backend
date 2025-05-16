@@ -1,34 +1,20 @@
-// const express = require("express");
-// const router = express.Router();
+const express = require("express");
+const router = express.Router();
+const adController = require("../controllers/advertController");
 
-// const {
-//   createAdvertSlot,
-//   updateAdvertSlot,
-//   deleteAdvertSlot,
-//   getAllAdvertSlots,
-// } = require("../controllers/advertSlotController");
+// 1. Create Ad
+router.post("/", adController.createAd);
 
-// const {
-//   createAd,
-//   updateAd,
-//   deleteAd,
-//   getAdsBySlot,
-//   getAdsByBusiness,
-//   getAllAds,
-// } = require("../controllers/advertController");
+// 2. Get all Ads (with optional query filters like slotId, businessId)
+router.get("/", adController.getAds);
 
-// // ----- Advert Slot Routes -----
-// router.post("/slots", createAdvertSlot);
-// router.put("/slots/:id", updateAdvertSlot);
-// router.delete("/slots/:id", deleteAdvertSlot);
-// router.get("/slots", getAllAdvertSlots);
+// 3. Update Ad by ID
+router.put("/:id", adController.updateAd);
 
-// // ----- Ad Routes -----
-// router.post("/", createAd);
-// router.put("/:id", updateAd);
-// router.delete("/:id", deleteAd);
-// router.get("/", getAllAds);
-// router.get("/slot/:slotId", getAdsBySlot);
-// router.get("/business/:businessId", getAdsByBusiness);
+// 4. Delete Ad by ID
+router.delete("/:id", adController.deleteAd);
 
-// module.exports = router;
+// 5. Toggle Ad active/inactive status
+router.patch("/toggle/:id", adController.toggleAdStatus);
+
+module.exports = router;
