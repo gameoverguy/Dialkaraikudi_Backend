@@ -7,14 +7,13 @@ json
 Copy
 Edit
 {
-  "name": "Home Top Banner",
-  "description": "Top banner for homepage",
+  "name": "Hero_Banner",
+  "description": "Hero Banner Slot in Homepage",
   "page": "home",
   "slotType": "Image",
   "adDurationInDays": 30,
-  "maxAds": 5,
-  "interval": 3000,
-  "allowedBusinesses": ["6645f0d5f86a9cc110e758de"]
+  "maxAds": 3,
+  "interval": 5000,
 }
 🔹 Get All Advert Slots (optional filters)
 URL:
