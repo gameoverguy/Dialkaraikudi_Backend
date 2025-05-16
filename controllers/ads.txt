@@ -7,8 +7,8 @@ json
 Copy
 Edit
 {
-  "slotId": "6645f2270dc2c15f10c93325",
-  "businessId": "6645f0d5f86a9cc110e758de",
+  "slotId": "68272bafa52bbd6718f881f7",
+  "businessId": "6811ce00a36698b853a8d69a",
   "type": "Image",
   "contentUrl": "https://res.cloudinary.com/demo/image/upload/v123456789/sample.jpg",
   "description": "Summer Sale Banner",
