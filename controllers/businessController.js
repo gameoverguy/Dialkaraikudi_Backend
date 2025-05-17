@@ -218,17 +218,9 @@ exports.getBusinessesByCategory = async (req, res) => {
   }
 };
 
-// For Business Panel - Secure version
+// Get Single Business by ID (WITH Reviews and User Info)
 exports.getBusinessById = async (req, res) => {
   try {
-    // Check if this is the logged-in business accessing their own profile
-    if (req.user.role === "business" && req.params.id !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: "Unauthorized access to this business",
-      });
-    }
-
     const business = await Business.findById(req.params.id).populate(
       "category",
       "displayName iconUrl"
@@ -240,9 +232,10 @@ exports.getBusinessById = async (req, res) => {
         .json({ success: false, message: "Business not found" });
     }
 
+    // 🛠️ Get all reviews related to this business
     const reviews = await Review.find({ business: business._id })
-      .populate("user", "name email")
-      .sort({ createdAt: -1 });
+      .populate("user", "name email") // populate user name and email
+      .sort({ createdAt: -1 }); // latest reviews first
 
     res.status(200).json({
       success: true,
