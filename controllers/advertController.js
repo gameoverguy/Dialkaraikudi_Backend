@@ -5,15 +5,8 @@ const Business = require("../models/Business");
 // 1. Create Ad
 exports.createAd = async (req, res) => {
   try {
-    const {
-      slotId,
-      businessId,
-      type,
-      contentUrl,
-      description,
-      priority,
-      startDate,
-    } = req.body;
+    const { slotId, businessId, type, contentUrl, description, priority } =
+      req.body;
 
     const slot = await AdvertSlot.findById(slotId);
     if (!slot)
@@ -32,10 +25,10 @@ exports.createAd = async (req, res) => {
       return res.status(400).json({ message: "Max ads reached for this slot" });
     }
 
-    // Calculate endDate using adDurationInDays from slot
-    const start = startDate ? new Date(startDate) : new Date();
+    // Use current time as startDate
+    const start = new Date();
     const end = new Date(start);
-    end.setDate(end.getDate() + (slot.adDurationInDays || 30)); // fallback to 30 if not set
+    end.setDate(end.getDate() + (slot.adDurationInDays || 30));
 
     const newAd = await Ad.create({
       slotId,
