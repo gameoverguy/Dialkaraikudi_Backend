@@ -13,7 +13,7 @@ const advertSlotSchema = new mongoose.Schema(
       type: Number,
       default: 30,
     },
-    price: { type: Number, required: true },
+    price: { type: Number },
     slotType: { type: String, enum: ["Image", "Video"], required: true },
     allowedBusinesses: [
       {
