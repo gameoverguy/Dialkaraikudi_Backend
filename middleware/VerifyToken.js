@@ -43,17 +43,23 @@ const verifyToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    console.log(decoded);
+
     let user;
     if (decoded.userType === "user") {
       user = await User.findById(decoded.userId);
     } else if (decoded.userType === "business") {
-      user = await Business.findById(decoded.userId);
+      user = await Business.findById(decoded.businessId);
     } else if (decoded.userType === "admin") {
-      user = await Admin.findById(decoded.userId);
+      user = await Admin.findById(decoded.adminId);
     }
 
+    console.log(decoded);
+
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res
+        .status(404)
+        .json({ message: "User not found", userdata: user });
     }
 
     req.user = user;
