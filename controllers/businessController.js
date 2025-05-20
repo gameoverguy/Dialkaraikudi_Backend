@@ -1,4 +1,5 @@
 const Business = require("../models/Business");
+const Category = require("../models/Category");
 const Review = require("../models/Review");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -309,15 +310,28 @@ exports.searchBusinesses = async (req, res) => {
       });
     }
 
+    // Find matching category IDs
+    const matchingCategories = await Category.find({
+      $or: [
+        { categoryName: { $regex: keyword, $options: "i" } },
+        { displayName: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ],
+    }).select("_id");
+
+    const categoryIds = matchingCategories.map((cat) => cat._id);
+
+    // Search businesses
     const filter = {
       $or: [
         { businessName: { $regex: keyword, $options: "i" } },
         { description: { $regex: keyword, $options: "i" } },
         { "address.formattedAddress": { $regex: keyword, $options: "i" } },
+        { categoryId: { $in: categoryIds } },
       ],
     };
 
-    const businesses = await Business.find(filter); // Removed populate
+    const businesses = await Business.find(filter);
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
