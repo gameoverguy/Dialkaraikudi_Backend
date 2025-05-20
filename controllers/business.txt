@@ -1,5 +1,5 @@
 POST
-http://192.168.1.33:5000/business/signup
+http://localhost:5000/business/signup
 
 {
   "email": "demo@freshmart.com",
@@ -42,7 +42,7 @@ http://192.168.1.33:5000/business/signup
 }
 
 POST
-http://192.168.1.33:5000/business/login
+http://localhost:5000/business/login
 {
   "email": "signup@stylehub.com",
   "password": "StyleHub123"
@@ -50,14 +50,14 @@ http://192.168.1.33:5000/business/login
 
 
 POST
-http://192.168.1.33:5000/business/forgotPassword
+http://localhost:5000/business/forgotPassword
 {
   "email": "signup@stylehub.com"
 }
 
 
 POST
-http://192.168.1.33:5000/business/verifyOtp
+http://localhost:5000/business/verifyOtp
 {
   "email": "signup@stylehub.com",
   "otp": "456789"
@@ -79,16 +79,16 @@ http://192.168.1.33:5000/business/resetPassword
 
 for getting ALL business
 GET
-http://192.168.1.33:5000/business
+http://localhost:5000/business
 
 for getting a SINGLE business
 GET
-http://192.168.1.33:5000/business/:id
+http://localhost:5000/business/:id
 
 
 for updating a single business
 PUT
-http://192.168.1.33:5000/business/:id
+http://localhost:5000/business/:id
 {
   "description": "Premium tailoring and boutique services for women.",
   "contactDetails": {
@@ -108,4 +108,4 @@ http://192.168.1.33:5000/business/:id
 
 for deleting a single business
 DELETE
-http://192.168.1.33:5000/business/:id
+http://localhost:5000/business/:id
