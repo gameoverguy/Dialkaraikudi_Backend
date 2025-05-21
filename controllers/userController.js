@@ -89,7 +89,7 @@ exports.forgotPassword = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found." });
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
-    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes validity
+    const expiresAt = Date.now() + 2 * 60 * 1000; // 2 minutes validity
 
     user.otp = { code: otp, expiresAt };
     await user.save();

@@ -190,13 +190,13 @@ exports.createBusiness = async (req, res) => {
   }
 };
 
-// Get All Businesses + Category populated
+// Get All Verified Businesses + Category populated
 exports.getAllBusinesses = async (req, res) => {
   try {
-    const businesses = await Business.find().populate(
+    const businesses = await Business.find({ verified: true }).populate(
       "category",
       "displayName iconUrl"
-    ); // ✨ populate category info
+    );
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
@@ -207,10 +207,10 @@ exports.getAllBusinesses = async (req, res) => {
 exports.getBusinessesByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params; // Use params instead of query
-    const businesses = await Business.find({ category: categoryId }).populate(
-      "category",
-      "displayName iconUrl"
-    );
+    const businesses = await Business.find({
+      category: categoryId,
+      verified: true,
+    }).populate("category", "displayName iconUrl");
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
@@ -319,8 +319,9 @@ exports.searchBusinesses = async (req, res) => {
 
     const categoryIds = matchingCategories.map((cat) => cat._id);
 
-    // Build filter
+    // Build filter (include verified)
     const filter = {
+      verified: true,
       $or: [
         { businessName: { $regex: keyword, $options: "i" } },
         { description: { $regex: keyword, $options: "i" } },

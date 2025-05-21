@@ -1,14 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const businessController = require("../controllers/businessController");
+const pendingBusinessController = require("../controllers/pendingBusinessController");
 const verifyToken = require("../middleware/VerifyToken");
 
 router.post("/", businessController.createBusiness);
-router.post("/signup", businessController.businessSignup);
+router.post("/signup", pendingBusinessController.registerBusiness);
 router.post("/login", businessController.login);
 router.post("/forgotPassword", businessController.forgotPassword);
 router.post("/verifyOtp", businessController.verifyOtp);
 router.post("/resetPassword", businessController.resetPassword);
+
+router.post(
+  "/verifyOtpAndCreateBusiness",
+  pendingBusinessController.verifyOtpAndCreateBusiness
+);
+router.post("/resendBusinessOtp", pendingBusinessController.resendBusinessOtp);
 
 router.get("/", businessController.getAllBusinesses);
 router.get("/:id", businessController.getBusinessById);
