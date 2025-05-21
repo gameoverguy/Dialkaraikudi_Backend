@@ -206,9 +206,9 @@ exports.getAllBusinesses = async (req, res) => {
 
 exports.getBusinessesByCategory = async (req, res) => {
   try {
-    const { categoryId } = req.params; // Use params instead of query
+    const { category } = req.params; // Use params instead of query
     const businesses = await Business.find({
-      category: categoryId,
+      category: category,
       verified: true,
     }).populate("category", "displayName iconUrl");
 
