@@ -34,7 +34,7 @@ router.post(
   userController.resetPassword
 );
 
-router.get("/", userController.getAllUsers);
+router.get("/", verifyToken, requireRole("admin"), userController.getAllUsers);
 router.get(
   "/:id",
   verifyToken,

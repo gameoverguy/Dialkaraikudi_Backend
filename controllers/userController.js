@@ -23,7 +23,7 @@ exports.loginUser = async (req, res) => {
         userType: user.userType,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "5m" }
+      { expiresIn: "10m" }
     );
 
     res.clearCookie("userToken");
@@ -35,7 +35,7 @@ exports.loginUser = async (req, res) => {
       httpOnly: true,
       secure: true, // required for HTTPS
       sameSite: "None", // allows cross-site
-      maxAge: 5 * 60 * 1000, // 5 minute
+      maxAge: 10 * 60 * 1000, // 10 minute
     });
 
     res.status(200).json({
