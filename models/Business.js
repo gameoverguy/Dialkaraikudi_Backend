@@ -51,16 +51,6 @@ const businessSchema = new mongoose.Schema(
       formattedAddress: { type: String }, // Full formatted address from Google
     },
 
-    subscription: {
-      currentPlan: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Subscription",
-      },
-      subscribedAt: { type: Date },
-      expiresAt: { type: Date },
-      isActive: { type: Boolean, default: true },
-    },
-
     businessTimings: {
       monday: {
         isOpen: { type: Boolean, default: true },

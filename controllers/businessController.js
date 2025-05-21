@@ -297,7 +297,6 @@ exports.deleteBusiness = async (req, res) => {
   }
 };
 
-// Search Businesses by keyword using req.params
 exports.searchBusinesses = async (req, res) => {
   try {
     const { keyword } = req.params;
@@ -320,17 +319,17 @@ exports.searchBusinesses = async (req, res) => {
 
     const categoryIds = matchingCategories.map((cat) => cat._id);
 
-    // Search businesses
+    // Build filter
     const filter = {
       $or: [
         { businessName: { $regex: keyword, $options: "i" } },
         { description: { $regex: keyword, $options: "i" } },
         { "address.formattedAddress": { $regex: keyword, $options: "i" } },
-        { categoryId: { $in: categoryIds } },
+        ...(categoryIds.length > 0 ? [{ category: { $in: categoryIds } }] : []),
       ],
     };
 
-    const businesses = await Business.find(filter);
+    const businesses = await Business.find(filter).populate("category");
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
