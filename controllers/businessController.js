@@ -191,6 +191,20 @@ exports.createBusiness = async (req, res) => {
 };
 
 // Get All Verified Businesses + Category populated
+exports.getAllBusinessesAdmin = async (req, res) => {
+  try {
+    const businesses = await Business.find().populate(
+      "category",
+      "displayName iconUrl"
+    );
+
+    res.status(200).json({ success: true, data: businesses });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get All Verified Businesses + Category populated
 exports.getAllBusinesses = async (req, res) => {
   try {
     const businesses = await Business.find({ verified: true }).populate(
