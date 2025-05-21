@@ -19,10 +19,12 @@ exports.getAdvertSlots = async (req, res) => {
     if (page) filter.page = page;
     if (isActive !== undefined) filter.isActive = isActive === "true";
 
-    const slots = await AdvertSlot.find(filter).populate(
-      "allowedBusinesses",
-      "businessName"
-    );
+    // const slots = await AdvertSlot.find(filter).populate(
+    //   "allowedBusinesses",
+    //   "businessName"
+    // );
+
+    const slots = await AdvertSlot.find();
     res.json(slots);
   } catch (error) {
     res.status(500).json({ message: error.message });

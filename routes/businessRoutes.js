@@ -13,7 +13,6 @@ router.post("/resetPassword", businessController.resetPassword);
 router.get("/", businessController.getAllBusinesses);
 router.get("/:id", businessController.getBusinessById);
 router.put("/:id", businessController.updateBusiness);
-router.post("/changesubscription", businessController.changeSubscription);
 router.delete("/:id", businessController.deleteBusiness);
 router.post("/bulkuploadbusiness", businessController.bulkUploadBusinesses);
 router.get("/category/:categoryId", businessController.getBusinessesByCategory);
