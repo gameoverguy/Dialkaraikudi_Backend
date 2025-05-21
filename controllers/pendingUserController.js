@@ -19,7 +19,7 @@ exports.registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
-    const expiresAt = Date.now() + 5 * 60 * 1000;
+    const expiresAt = Date.now() + 2 * 60 * 1000;
 
     await PendingUser.create({
       name,
@@ -91,7 +91,7 @@ exports.resendOtp = async (req, res) => {
     }
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
-    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 mins
+    const expiresAt = Date.now() + 2 * 60 * 1000; // 2 mins
 
     pendingUser.otp = { code: otp, expiresAt };
     await pendingUser.save();
