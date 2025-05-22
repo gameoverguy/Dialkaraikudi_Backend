@@ -15,24 +15,9 @@ router.post(
 );
 router.post("/resendregisterotp", pendingUserController.resendOtp);
 
-router.post(
-  "/forgotpassword",
-  verifyToken,
-  requireRole("user"),
-  userController.forgotPassword
-);
-router.post(
-  "/verifyotp",
-  verifyToken,
-  requireRole("user"),
-  userController.verifyOtp
-);
-router.post(
-  "/resetpassword",
-  verifyToken,
-  requireRole("user"),
-  userController.resetPassword
-);
+router.post("/forgotpassword", userController.forgotPassword);
+router.post("/verifyotp", userController.verifyOtp);
+router.post("/resetpassword", userController.resetPassword);
 
 router.get("/", verifyToken, requireRole("admin"), userController.getAllUsers);
 router.get(
