@@ -89,7 +89,7 @@ exports.assignBusinessToSlot = async (req, res) => {
       await slot.save();
     }
 
-    res.json({ message: "Business assigned to slot", slot });
+    res.json({ message: "Business assigned to slot", success: true, slot });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

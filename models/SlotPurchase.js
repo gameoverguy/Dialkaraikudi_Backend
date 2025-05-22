@@ -20,7 +20,7 @@ const slotPurchaseSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["pendingupload", "completed"],
-      default: "pending",
+      default: "pendingupload",
     },
     purchasedAt: {
       type: Date,

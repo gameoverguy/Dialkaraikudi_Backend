@@ -1,19 +1,21 @@
 const SlotPurchase = require("../models/SlotPurchase");
 
-// Create a new slot purchase
-exports.createSlotPurchase = async (req, res) => {
+// Business purchases a slot
+exports.purchaseSlot = async (req, res) => {
   try {
     const { slotId, businessId } = req.body;
 
     const existing = await SlotPurchase.findOne({
       slotId,
       businessId,
-      status: "pending",
+      status: "pendingupload",
     });
+
     if (existing) {
-      return res
-        .status(400)
-        .json({ message: "Slot already purchased and pending ad upload." });
+      return res.status(400).json({
+        message:
+          "You have already purchased this slot and it's pending an ad upload.",
+      });
     }
 
     const purchase = await SlotPurchase.create({ slotId, businessId });
@@ -23,39 +25,36 @@ exports.createSlotPurchase = async (req, res) => {
   }
 };
 
-// Get all pending purchases (admin view)
+// Admin fetches pending slot purchases
 exports.getPendingSlotPurchases = async (req, res) => {
   try {
-    const pending = await SlotPurchase.find({ status: "pending" })
-      .populate("slotId")
-      .populate("businessId");
+    const pending = await SlotPurchase.find({ status: "pendingupload" })
+      .populate("slotId businessId")
+      .sort({ purchasedAt: -1 });
+
     res.status(200).json(pending);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Get all purchases for a specific business
-exports.getBusinessSlotPurchases = async (req, res) => {
+// Admin manually marks slot purchase as completed (if needed)
+exports.markSlotPurchaseCompleted = async (req, res) => {
   try {
-    const { businessId } = req.params;
-    const purchases = await SlotPurchase.find({ businessId }).populate(
-      "slotId adId"
+    const { purchaseId, adId } = req.body;
+
+    const updated = await SlotPurchase.findByIdAndUpdate(
+      purchaseId,
+      { status: "completed", adId },
+      { new: true }
     );
-    res.status(200).json(purchases);
+
+    if (!updated) {
+      return res.status(404).json({ message: "Slot purchase not found" });
+    }
+
+    res.status(200).json(updated);
   } catch (error) {
     res.status(500).json({ message: error.message });
-  }
-};
-
-// Mark a purchase as completed when an ad is added
-exports.markSlotPurchaseCompleted = async (slotId, businessId, adId) => {
-  try {
-    await SlotPurchase.findOneAndUpdate(
-      { slotId, businessId, status: "pending" },
-      { status: "completed", adId }
-    );
-  } catch (error) {
-    console.error("Failed to mark slot purchase as completed:", error.message);
   }
 };

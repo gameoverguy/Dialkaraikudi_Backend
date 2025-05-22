@@ -2,16 +2,13 @@ const express = require("express");
 const router = express.Router();
 const slotPurchaseController = require("../controllers/slotPurchaseController");
 
-// 1. Business purchases a slot
-router.post("/", slotPurchaseController.createSlotPurchase);
+// Business purchases a slot
+router.post("/", slotPurchaseController.purchaseSlot);
 
-// 2. Admin: View all pending purchases (needing ads)
+// Admin gets all pending purchases
 router.get("/pending", slotPurchaseController.getPendingSlotPurchases);
 
-// 3. Business: View their own slot purchases
-router.get(
-  "/business/:businessId",
-  slotPurchaseController.getBusinessSlotPurchases
-);
+// Admin marks purchase completed manually (if needed)
+router.patch("/complete", slotPurchaseController.markSlotPurchaseCompleted);
 
 module.exports = router;
