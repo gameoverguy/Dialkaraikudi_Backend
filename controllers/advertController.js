@@ -1,6 +1,6 @@
 const Ad = require("../models/Advert");
+const SlotPurchase = require("../models/SlotPurchase");
 const AdvertSlot = require("../models/AdvertSlot");
-const Business = require("../models/Business");
 
 // 1. Create Ad
 exports.createAd = async (req, res) => {
@@ -40,6 +40,19 @@ exports.createAd = async (req, res) => {
       startDate: start,
       endDate: end,
     });
+
+    await SlotPurchase.findOneAndUpdate(
+      {
+        slotId,
+        businessId,
+        status: "pendingupload", // only update pending ones
+      },
+      {
+        status: "completed",
+        adId: newAd._id,
+      },
+      { new: true }
+    );
 
     res.status(201).json(newAd);
   } catch (error) {
