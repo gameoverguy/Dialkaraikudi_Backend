@@ -41,6 +41,8 @@ exports.verifyOtpAndCreateBusiness = async (req, res) => {
     const email = req.body.email;
     const otp = req.body.otp;
 
+    console.log();
+
     const pending = await PendingBusiness.findOne({ email });
     if (!pending) {
       return res.status(404).json({ message: "No pending signup found." });
