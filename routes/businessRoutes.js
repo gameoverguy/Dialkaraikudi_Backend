@@ -23,7 +23,7 @@ router.get("/:id", businessController.getBusinessById);
 router.put("/:id", businessController.updateBusiness);
 router.delete("/:id", businessController.deleteBusiness);
 router.post("/bulkuploadbusiness", businessController.bulkUploadBusinesses);
-router.get("/category/:categoryId", businessController.getBusinessesByCategory);
+router.get("/category/:id", businessController.getBusinessesByCategory);
 router.get("/search/:keyword", businessController.searchBusinesses);
 
 module.exports = router;
