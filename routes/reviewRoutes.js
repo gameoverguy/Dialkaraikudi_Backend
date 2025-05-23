@@ -10,4 +10,7 @@ router.get("/:id", reviewController.getReviewById);
 router.put("/:id", reviewController.updateReview);
 router.delete("/:id", reviewController.deleteReview);
 
+// Get all reviews for a business
+router.get("/business/:businessId", reviewController.getReviewsForBusiness);
+
 module.exports = router;

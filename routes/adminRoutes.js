@@ -3,6 +3,8 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
 
+router.get("/dashboard", adminController.getDashboardData);
+
 router.post("/login", adminController.loginAdmin);
 // Admin Forgot Password
 router.post("/forgotpassword", adminController.forgotPassword);

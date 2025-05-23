@@ -123,3 +123,18 @@ exports.getMyReview = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
+// ✅ GET all reviews for a specific business
+exports.getReviewsForBusiness = async (req, res) => {
+  try {
+    const { businessId } = req.params;
+
+    const reviews = await Review.find({ business: businessId })
+      .populate("user", "name")
+      .sort({ createdAt: -1 }); // Optional: newest first
+
+    res.status(200).json({ success: true, data: reviews });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};

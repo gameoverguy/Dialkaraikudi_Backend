@@ -1,9 +1,12 @@
-// controllers/adminController.js
-
 const Admin = require("../models/Admin");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/sendEmail");
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const Business = require("../models/Business");
+const Review = require("../models/Review");
+const Category = require("../models/Category");
+const AdvertSlot = require("../models/AdvertSlot");
 
 // Admin Login
 exports.loginAdmin = async (req, res) => {
@@ -144,5 +147,106 @@ exports.resetPassword = async (req, res) => {
     res.status(200).json({ message: "Admin password reset successful." });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const groupByTime = async (Model, dateField, startDate, groupFormat) => {
+  return Model.aggregate([
+    {
+      $match: {
+        [dateField]: { $gte: startDate },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: groupFormat, date: `$${dateField}` },
+        },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+};
+
+exports.getDashboardData = async (req, res) => {
+  try {
+    const [userCount, businessCount, categoriesCount, advertSlotsCount] =
+      await Promise.all([
+        User.countDocuments(),
+        Business.countDocuments(),
+        Category.countDocuments(),
+        AdvertSlot.countDocuments(),
+      ]);
+
+    const recentUsers = await User.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select("name email createdAt");
+
+    const recentBusinesses = await Business.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select("businessName ownerName createdAt");
+
+    const recentReviews = await Review.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("user", "name")
+      .populate("business", "businessName")
+      .select("rating comment createdAt");
+
+    const now = new Date();
+
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+    const [weeklyUsers, weeklyBusinesses] = await Promise.all([
+      groupByTime(User, "createdAt", startOfWeek, "%Y-%m-%d"),
+      groupByTime(Business, "createdAt", startOfWeek, "%Y-%m-%d"),
+    ]);
+
+    const [monthlyUsers, monthlyBusinesses] = await Promise.all([
+      groupByTime(User, "createdAt", startOfMonth, "%Y-%m-%d"),
+      groupByTime(Business, "createdAt", startOfMonth, "%Y-%m-%d"),
+    ]);
+
+    const [yearlyUsers, yearlyBusinesses] = await Promise.all([
+      groupByTime(User, "createdAt", startOfYear, "%Y-%m"),
+      groupByTime(Business, "createdAt", startOfYear, "%Y-%m"),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalUsers: userCount,
+        totalBusinesses: businessCount,
+        totalCategories: categoriesCount,
+        totalAdvertSlots: advertSlotsCount,
+        recentUsers,
+        recentBusinesses,
+        recentReviews,
+        weekly: {
+          users: weeklyUsers,
+          businesses: weeklyBusinesses,
+        },
+        monthly: {
+          users: monthlyUsers,
+          businesses: monthlyBusinesses,
+        },
+        yearly: {
+          users: yearlyUsers,
+          businesses: yearlyBusinesses,
+        },
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 };
