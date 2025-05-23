@@ -1,4 +1,6 @@
 const BusinessView = require("../models/BusinessView");
+const Review = require("../models/Review");
+const mongoose = require("mongoose");
 const moment = require("moment");
 
 // Track each view and check if unique per day per user/IP
@@ -59,15 +61,21 @@ async function getBusinessViewsCount(businessId, period) {
     startDate = moment().subtract(30, "days").format("YYYY-MM-DD");
   } else if (period === "yearly") {
     startDate = moment().subtract(365, "days").format("YYYY-MM-DD");
+  } else if (period === "alltime") {
+    startDate = null; // No filter on date
   } else {
     throw new Error("Invalid period specified");
   }
 
-  // Filter documents in date range
-  const views = await BusinessView.find({
+  const matchFilter = {
     business: businessId,
-    date: { $gte: startDate, $lte: endDate },
-  });
+  };
+
+  if (startDate) {
+    matchFilter.date = { $gte: startDate, $lte: endDate };
+  }
+
+  const views = await BusinessView.find(matchFilter);
 
   const totalViews = views.length;
 
@@ -88,13 +96,73 @@ async function getBusinessViewsCount(businessId, period) {
     totalViews,
     totalUniqueViews: uniqueViewKeys.size,
     totalUniqueUsers: uniqueUsersSet.size,
-    startDate,
+    startDate: startDate || "beginning",
     endDate,
     period,
+  };
+}
+
+async function getBusinessReviewStats(businessId, period) {
+  let startDate;
+  const endDate = moment().endOf("day").toDate();
+
+  if (period === "weekly") {
+    startDate = moment().subtract(7, "days").startOf("day").toDate();
+  } else if (period === "monthly") {
+    startDate = moment().subtract(30, "days").startOf("day").toDate();
+  } else if (period === "yearly") {
+    startDate = moment().subtract(365, "days").startOf("day").toDate();
+  } else {
+    throw new Error("Invalid period");
+  }
+
+  const stats = await Review.aggregate([
+    {
+      $match: {
+        business: new mongoose.Types.ObjectId(businessId),
+        createdAt: { $gte: startDate, $lte: endDate },
+      },
+    },
+    {
+      $facet: {
+        totalReviews: [{ $count: "count" }],
+        averageRating: [
+          {
+            $group: {
+              _id: null,
+              avg: { $avg: "$rating" },
+            },
+          },
+        ],
+        ratingBreakdown: [
+          {
+            $group: {
+              _id: "$rating",
+              count: { $sum: 1 },
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  const result = stats[0];
+
+  return {
+    period,
+    startDate,
+    endDate,
+    totalReviews: result.totalReviews[0]?.count || 0,
+    averageRating: result.averageRating[0]?.avg?.toFixed(1) || "0.0",
+    ratingBreakdown: result.ratingBreakdown.reduce((acc, cur) => {
+      acc[cur._id] = cur.count;
+      return acc;
+    }, {}),
   };
 }
 
 module.exports = {
   trackBusinessView,
   getBusinessViewsCount,
+  getBusinessReviewStats,
 };

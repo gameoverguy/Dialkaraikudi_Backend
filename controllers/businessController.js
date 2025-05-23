@@ -9,6 +9,7 @@ const sendEmail = require("../utils/sendEmail");
 const {
   trackBusinessView,
   getBusinessViewsCount,
+  getBusinessReviewStats,
 } = require("./trackBusinessView");
 
 // Business Signup (Simplified)
@@ -480,7 +481,19 @@ exports.getBusinessDashboard = async (req, res) => {
         : 0;
 
     const latestReviews = reviews.slice(0, 3);
-    const reviewSummary = reviews;
+
+    const reviewStatsWeekly = await getBusinessReviewStats(
+      businessId,
+      "weekly"
+    );
+    const reviewStatsMonthly = await getBusinessReviewStats(
+      businessId,
+      "monthly"
+    );
+    const reviewStatsYearly = await getBusinessReviewStats(
+      businessId,
+      "yearly"
+    );
 
     const viewsweeklySummary = await getBusinessViewsCount(
       business._id,
@@ -495,6 +508,11 @@ exports.getBusinessDashboard = async (req, res) => {
       "yearly"
     );
 
+    const viewsAllTimeSummary = await getBusinessViewsCount(
+      business._id,
+      "alltime"
+    );
+
     res.json({
       business,
       favourites: favouriteCount,
@@ -502,11 +520,16 @@ exports.getBusinessDashboard = async (req, res) => {
         count: reviewCount,
         averageRating,
         latestReviews,
-        reviewSummary,
+        reviewStatsWeekly,
+        reviewStatsMonthly,
+        reviewStatsYearly,
       },
-      viewsweeklySummary,
-      viewsmonthlySummary,
-      viewsyearlySummary,
+      views: {
+        viewsAllTimeSummary,
+        viewsweeklySummary,
+        viewsmonthlySummary,
+        viewsyearlySummary,
+      },
     });
   } catch (err) {
     console.error("Dashboard error:", err);
