@@ -94,8 +94,7 @@ exports.forgotPassword = async (req, res) => {
     user.otp = { code: otp, expiresAt };
     await user.save();
 
-    await sendEmail(email, "Password Reset OTP", `Your OTP is ${otp}`);
-    await sendEmail(email, "Your Password Reset OTP - Dialkaraikudi", otp);
+    await sendEmail(email, "Your User Password Reset OTP", otp);
 
     res.status(200).json({ message: "OTP sent to your registered email." });
   } catch (error) {
