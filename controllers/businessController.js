@@ -109,7 +109,7 @@ exports.forgotPassword = async (req, res) => {
     business.otp = { code: otp, expiresAt };
     await business.save();
 
-    await sendEmail(email, "Password Reset OTP", `Your OTP is ${otp}`);
+    await sendEmail(email, "Your Business Password Reset OTP", otp);
 
     res.status(200).json({ message: "OTP sent to your email." });
   } catch (error) {
