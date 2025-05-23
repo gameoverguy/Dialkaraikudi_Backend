@@ -41,6 +41,6 @@ const disableExpiredAds = async () => {
 };
 
 // Run every hour (or change to any desired interval)
-cron.schedule("14 17 * * *", disableExpiredAds, {
+cron.schedule("0 0 * * *", disableExpiredAds, {
   timezone: "Asia/Kolkata",
 });
