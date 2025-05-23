@@ -4,6 +4,8 @@ const businessController = require("../controllers/businessController");
 const pendingBusinessController = require("../controllers/pendingBusinessController");
 const verifyToken = require("../middleware/VerifyToken");
 
+router.get("/dashboard/:id", businessController.getBusinessDashboard);
+
 router.post("/", businessController.createBusiness);
 router.post("/signup", pendingBusinessController.registerBusiness);
 router.post("/login", businessController.login);

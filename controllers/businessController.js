@@ -1,9 +1,15 @@
 const Business = require("../models/Business");
-const Category = require("../models/Category");
+const SlotPurchase = require("../models/SlotPurchase");
+const Favourite = require("../models/Favourite");
 const Review = require("../models/Review");
+const Category = require("../models/Category");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
+const {
+  trackBusinessView,
+  getBusinessViewsCount,
+} = require("./trackBusinessView");
 
 // Business Signup (Simplified)
 exports.businessSignup = async (req, res) => {
@@ -235,31 +241,51 @@ exports.getBusinessesByCategory = async (req, res) => {
 // Get Single Business by ID (WITH Reviews and User Info)
 exports.getBusinessById = async (req, res) => {
   try {
-    const business = await Business.findById(req.params.id).populate(
+    const { id } = req.params;
+
+    console.log(id);
+
+    // Fetch business with populated category
+    const business = await Business.findById(id).populate(
       "category",
       "displayName iconUrl"
     );
 
+    console.log(business);
+
     if (!business) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Business not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Business not found",
+      });
     }
 
-    // 🛠️ Get all reviews related to this business
-    const reviews = await Review.find({ business: business._id })
-      .populate("user", "name email") // populate user name and email
-      .sort({ createdAt: -1 }); // latest reviews first
+    // Track the view: pass businessId, ip, userId (or null)
+    const userId = req.user?._id || null;
+    const ipAddress = req.ip;
 
+    // This returns true if this is a unique view today (per IP or user)
+    const isUniqueView = await trackBusinessView(id, ipAddress, userId);
+
+    // Fetch reviews for the business with user info
+    const reviews = await Review.find({ business: id })
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    // Return business, reviews, and the unique view flag
     res.status(200).json({
       success: true,
       data: {
         business,
         reviews,
+        uniqueViewToday: isUniqueView,
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -404,5 +430,56 @@ exports.bulkUploadBusinesses = async (req, res) => {
     res.status(201).json({ success: true, result: results });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getBusinessDashboard = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const businessId = id;
+
+    // Get business info
+    const business = await Business.findById(businessId)
+      .select("-password -otp")
+      .lean();
+
+    if (!business)
+      return res.status(404).json({ message: "Business not found" });
+
+    // Count of users who favorited this business
+    const favouriteCount = await Favourite.countDocuments({
+      business: businessId,
+    });
+
+    // Reviews stats
+    const reviews = await Review.find({ business: businessId }).populate(
+      "user",
+      "name avatarUrl"
+    );
+    const reviewCount = reviews.length;
+    const averageRating =
+      reviewCount > 0
+        ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviewCount).toFixed(
+            1
+          )
+        : 0;
+
+    const latestReviews = reviews.slice(0, 3);
+
+    const viewsSummary = await getBusinessViewsCount(business._id, "monthly");
+
+    res.json({
+      business,
+      favourites: favouriteCount,
+      reviews: {
+        count: reviewCount,
+        averageRating,
+        latestReviews,
+      },
+      viewsSummary,
+    });
+  } catch (err) {
+    console.error("Dashboard error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
