@@ -468,7 +468,7 @@ exports.getBusinessDashboard = async (req, res) => {
     // Reviews stats
     const reviews = await Review.find({ business: businessId }).populate(
       "user",
-      "name avatarUrl"
+      "name"
     );
     const reviewCount = reviews.length;
     const averageRating =
@@ -479,6 +479,7 @@ exports.getBusinessDashboard = async (req, res) => {
         : 0;
 
     const latestReviews = reviews.slice(0, 3);
+    const reviewSummary = reviews;
 
     const viewsweeklySummary = await getBusinessViewsCount(
       business._id,
@@ -500,6 +501,7 @@ exports.getBusinessDashboard = async (req, res) => {
         count: reviewCount,
         averageRating,
         latestReviews,
+        reviewSummary,
       },
       viewsweeklySummary,
       viewsmonthlySummary,
