@@ -263,7 +263,7 @@ exports.getBusinessById = async (req, res) => {
       "displayName iconUrl"
     );
 
-    console.log(business);
+    console.log("266", business);
 
     if (!business) {
       return res.status(404).json({
@@ -273,7 +273,8 @@ exports.getBusinessById = async (req, res) => {
     }
 
     // Track the view: pass businessId, ip, userId (or null)
-    const userId = req.user.userId || null;
+
+    const userId = req.user ? req.user.userId : null;
     const ipAddress = req.ip;
 
     console.log(ipAddress, userId);
