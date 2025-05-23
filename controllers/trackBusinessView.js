@@ -2,9 +2,24 @@ const BusinessView = require("../models/BusinessView");
 const moment = require("moment");
 
 // Track each view and check if unique per day per user/IP
-async function trackBusinessView(businessId, ipAddress, userId = null) {
+async function trackBusinessView(businessId, ipAddress, userId) {
   const today = moment().format("YYYY-MM-DD");
+  const now = new Date();
 
+  // Prevent duplicate logs from accidental rapid double requests (within 5 seconds)
+  const recentView = await BusinessView.findOne({
+    business: businessId,
+    ipAddress,
+    user: userId,
+    date: today,
+    createdAt: { $gte: new Date(now.getTime() - 5000) }, // last 5 seconds
+  });
+
+  if (recentView) {
+    return false; // don’t track again this quickly
+  }
+
+  // Check if unique today
   let uniqueViewExists;
 
   if (userId) {
@@ -22,7 +37,7 @@ async function trackBusinessView(businessId, ipAddress, userId = null) {
     });
   }
 
-  // Save every view (refresh)
+  // Save view
   await BusinessView.create({
     business: businessId,
     ipAddress,
@@ -30,11 +45,11 @@ async function trackBusinessView(businessId, ipAddress, userId = null) {
     date: today,
   });
 
-  return !uniqueViewExists; // true if unique today
+  return !uniqueViewExists;
 }
 
 // Get views counts (total views, unique views, unique users) for a period
-async function getBusinessViewsCount(businessId, period = "monthly") {
+async function getBusinessViewsCount(businessId, period) {
   let startDate;
   const endDate = moment().format("YYYY-MM-DD");
 

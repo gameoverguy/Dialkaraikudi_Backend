@@ -241,9 +241,21 @@ exports.getBusinessesByCategory = async (req, res) => {
 // Get Single Business by ID (WITH Reviews and User Info)
 exports.getBusinessById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const authHeader = req.headers.authorization;
+    const tokenFromHeader =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.split(" ")[1]
+        : null;
 
-    console.log(id);
+    const token = req.cookies?.userToken || tokenFromHeader;
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log(decoded);
+      req.user = decoded; // So req.user._id becomes available
+    } catch (err) {}
+
+    const { id } = req.params;
 
     // Fetch business with populated category
     const business = await Business.findById(id).populate(
@@ -261,8 +273,10 @@ exports.getBusinessById = async (req, res) => {
     }
 
     // Track the view: pass businessId, ip, userId (or null)
-    const userId = req.user?._id || null;
+    const userId = req.user.userId || null;
     const ipAddress = req.ip;
+
+    console.log(ipAddress, userId);
 
     // This returns true if this is a unique view today (per IP or user)
     const isUniqueView = await trackBusinessView(id, ipAddress, userId);
@@ -466,7 +480,18 @@ exports.getBusinessDashboard = async (req, res) => {
 
     const latestReviews = reviews.slice(0, 3);
 
-    const viewsSummary = await getBusinessViewsCount(business._id, "monthly");
+    const viewsweeklySummary = await getBusinessViewsCount(
+      business._id,
+      "weekly"
+    );
+    const viewsmonthlySummary = await getBusinessViewsCount(
+      business._id,
+      "monthly"
+    );
+    const viewsyearlySummary = await getBusinessViewsCount(
+      business._id,
+      "yearly"
+    );
 
     res.json({
       business,
@@ -476,7 +501,9 @@ exports.getBusinessDashboard = async (req, res) => {
         averageRating,
         latestReviews,
       },
-      viewsSummary,
+      viewsweeklySummary,
+      viewsmonthlySummary,
+      viewsyearlySummary,
     });
   } catch (err) {
     console.error("Dashboard error:", err);
