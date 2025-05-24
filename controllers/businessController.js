@@ -73,7 +73,7 @@ exports.login = async (req, res) => {
       httpOnly: true,
       secure: true, // required for HTTPS
       sameSite: "None", // allows cross-site
-      maxAge: 5 * 60 * 1000, // 5 minute
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 21 days
     });
 
     res.status(200).json({
