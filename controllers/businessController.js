@@ -495,23 +495,30 @@ exports.getBusinessDashboard = async (req, res) => {
       "yearly"
     );
 
-    const viewsweeklySummary = await getBusinessViewsCount(
-      business._id,
-      "weekly"
-    );
-    const viewsmonthlySummary = await getBusinessViewsCount(
-      business._id,
-      "monthly"
-    );
-    const viewsyearlySummary = await getBusinessViewsCount(
-      business._id,
-      "yearly"
-    );
+    // const viewsweeklySummary = await getBusinessViewsCount(
+    //   business._id,
+    //   "weekly"
+    // );
+    // const viewsmonthlySummary = await getBusinessViewsCount(
+    //   business._id,
+    //   "monthly"
+    // );
+    // const viewsyearlySummary = await getBusinessViewsCount(
+    //   business._id,
+    //   "yearly"
+    // );
 
     // const viewsAllTimeSummary = await getBusinessViewsCount(
     //   business._id,
     //   "alltime"
     // );
+
+    const [weekly, monthly, yearly, alltime] = await Promise.all([
+      getBusinessViewsCount(businessId, "weekly"),
+      getBusinessViewsCount(businessId, "monthly"),
+      getBusinessViewsCount(businessId, "yearly"),
+      getBusinessViewsCount(businessId, "alltime"),
+    ]);
 
     res.json({
       business,
@@ -525,10 +532,30 @@ exports.getBusinessDashboard = async (req, res) => {
         reviewStatsYearly,
       },
       views: {
-        // viewsAllTimeSummary,
-        viewsweeklySummary,
-        viewsmonthlySummary,
-        viewsyearlySummary,
+        weekly: {
+          totalViews: weekly.totalViews,
+          totalUniqueViews: weekly.totalUniqueViews,
+          totalUniqueUsers: weekly.totalUniqueUsers,
+          breakdown: weekly.breakdown, // Include daily breakdown
+        },
+        monthly: {
+          totalViews: monthly.totalViews,
+          totalUniqueViews: monthly.totalUniqueViews,
+          totalUniqueUsers: monthly.totalUniqueUsers,
+          breakdown: monthly.breakdown, // Include daily breakdown
+        },
+        yearly: {
+          totalViews: yearly.totalViews,
+          totalUniqueViews: yearly.totalUniqueViews,
+          totalUniqueUsers: yearly.totalUniqueUsers,
+          breakdown: yearly.breakdown, // Include monthly breakdown
+        },
+        alltime: {
+          totalViews: alltime.totalViews,
+          totalUniqueViews: alltime.totalUniqueViews,
+          totalUniqueUsers: alltime.totalUniqueUsers,
+          breakdown: alltime.breakdown, // This may be empty if not grouped
+        },
       },
     });
   } catch (err) {

@@ -104,67 +104,107 @@ async function trackBusinessView(businessId, ipAddress, userId) {
 
 async function getBusinessViewsCount(businessId, period) {
   const endDate = moment().endOf("day").toDate();
-  let startDate;
-
-  let groupFormat; // Determines how to group data
+  let startDate = null;
+  let groupFormat;
 
   if (period === "weekly") {
-    startDate = moment().subtract(6, "days").startOf("day").toDate(); // includes today
-    groupFormat = "%Y-%m-%d"; // daily
+    startDate = moment().subtract(6, "days").startOf("day").toDate();
+    groupFormat = "%Y-%m-%d";
   } else if (period === "monthly") {
     startDate = moment().subtract(29, "days").startOf("day").toDate();
-    groupFormat = "%Y-%m-%d"; // daily
+    groupFormat = "%Y-%m-%d";
   } else if (period === "yearly") {
     startDate = moment().subtract(11, "months").startOf("month").toDate();
-    groupFormat = "%Y-%m"; // monthly
+    groupFormat = "%Y-%m";
+  } else if (period === "alltime") {
+    groupFormat = null;
   } else {
-    throw new Error("Invalid period specified");
+    throw new Error("Invalid period");
   }
 
-  const viewsData = await BusinessView.aggregate([
-    {
-      $match: {
-        business: new mongoose.Types.ObjectId(businessId),
-        createdAt: { $gte: startDate, $lte: endDate },
-      },
-    },
-    {
-      $group: {
-        _id: {
-          groupDate: {
-            $dateToString: { format: groupFormat, date: "$createdAt" },
+  const matchFilter = { business: new mongoose.Types.ObjectId(businessId) };
+  if (startDate) matchFilter.createdAt = { $gte: startDate, $lte: endDate };
+
+  let breakdown = [];
+
+  if (groupFormat) {
+    breakdown = await BusinessView.aggregate([
+      { $match: matchFilter },
+      {
+        $group: {
+          _id: {
+            groupDate: {
+              $dateToString: { format: groupFormat, date: "$createdAt" },
+            },
+          },
+          totalViews: { $sum: 1 },
+          uniqueViewers: {
+            $addToSet: {
+              $cond: [
+                { $ifNull: ["$user", false] },
+                { $concat: ["user-", { $toString: "$user" }] },
+                { $concat: ["ip-", "$ipAddress"] },
+              ],
+            },
           },
         },
-        totalViews: { $sum: 1 },
-        uniqueUsers: {
-          $addToSet: {
-            $cond: [
-              { $ifNull: ["$user", false] },
-              { $concat: ["user-", { $toString: "$user" }] },
-              { $concat: ["ip-", "$ipAddress"] },
-            ],
-          },
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id.groupDate",
+          totalViews: 1,
+          uniqueViews: { $size: "$uniqueViewers" },
         },
       },
-    },
-    {
-      $project: {
-        _id: 0,
-        date: "$_id.groupDate",
-        totalViews: 1,
-        uniqueViews: { $size: "$uniqueUsers" },
-      },
-    },
-    {
-      $sort: { date: 1 },
-    },
-  ]);
+      { $sort: { date: 1 } },
+    ]);
+
+    // Fill in missing dates with 0s
+    const dateMap = new Map(breakdown.map((b) => [b.date, b]));
+    const filledBreakdown = [];
+    const current = moment(startDate);
+    const end = moment(endDate);
+
+    while (current <= end) {
+      const formatted = current.format(groupFormat.replace("%", ""));
+      filledBreakdown.push(
+        dateMap.get(formatted) || {
+          date: formatted,
+          totalViews: 0,
+          uniqueViews: 0,
+        }
+      );
+      groupFormat === "%Y-%m" ? current.add(1, "month") : current.add(1, "day");
+    }
+
+    breakdown = filledBreakdown;
+  }
+
+  // All-time stats
+  const allViews = await BusinessView.find({ business: businessId });
+
+  const totalViews = allViews.length;
+  const uniqueViewKeys = new Set();
+  const uniqueUsersSet = new Set();
+
+  allViews.forEach((v) => {
+    const dateKey = moment(v.createdAt).format("YYYY-MM-DD");
+    const key = v.user
+      ? `${dateKey}-user-${v.user.toString()}`
+      : `${dateKey}-ip-${v.ipAddress}`;
+    uniqueViewKeys.add(key);
+    if (v.user) uniqueUsersSet.add(v.user.toString());
+  });
 
   return {
     period,
-    startDate,
+    startDate: startDate || "beginning",
     endDate,
-    breakdown: viewsData, // list of { date, totalViews, uniqueViews }
+    totalViews,
+    totalUniqueViews: uniqueViewKeys.size,
+    totalUniqueUsers: uniqueUsersSet.size,
+    breakdown,
   };
 }
 

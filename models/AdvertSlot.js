@@ -15,7 +15,6 @@ const advertSlotSchema = new mongoose.Schema(
     },
     adPreviewUrl: {
       type: String,
-      required: true,
     },
     price: { type: Number },
     slotType: { type: String, enum: ["Image", "Video"], required: true },
