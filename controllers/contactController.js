@@ -1,7 +1,7 @@
 const ContactMessage = require("../models/ContactMessage");
 const nodemailer = require("nodemailer");
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@example.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "karthick251087@gmail.com";
 
 const contactUs = async (req, res) => {
   try {

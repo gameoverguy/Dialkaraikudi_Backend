@@ -508,10 +508,10 @@ exports.getBusinessDashboard = async (req, res) => {
       "yearly"
     );
 
-    const viewsAllTimeSummary = await getBusinessViewsCount(
-      business._id,
-      "alltime"
-    );
+    // const viewsAllTimeSummary = await getBusinessViewsCount(
+    //   business._id,
+    //   "alltime"
+    // );
 
     res.json({
       business,
@@ -525,7 +525,7 @@ exports.getBusinessDashboard = async (req, res) => {
         reviewStatsYearly,
       },
       views: {
-        viewsAllTimeSummary,
+        // viewsAllTimeSummary,
         viewsweeklySummary,
         viewsmonthlySummary,
         viewsyearlySummary,
