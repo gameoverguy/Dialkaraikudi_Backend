@@ -103,10 +103,18 @@ async function trackBusinessView(businessId, ipAddress, userId) {
 // }
 
 async function getBusinessViewsCount(businessId, period) {
-  const endDate = moment().endOf("day").toDate();
+  const mongoToMomentFormatMap = {
+    "%Y-%m-%d": "YYYY-MM-DD",
+    "%Y-%m": "YYYY-MM",
+  };
+
+  const endDateMoment = moment().endOf("day");
+  const endDate = endDateMoment.toDate();
+
   let startDate = null;
   let groupFormat;
 
+  // Define startDate and grouping format based on period
   if (period === "weekly") {
     startDate = moment().subtract(6, "days").startOf("day").toDate();
     groupFormat = "%Y-%m-%d";
@@ -117,17 +125,21 @@ async function getBusinessViewsCount(businessId, period) {
     startDate = moment().subtract(11, "months").startOf("month").toDate();
     groupFormat = "%Y-%m";
   } else if (period === "alltime") {
-    groupFormat = null;
+    groupFormat = null; // no breakdown
   } else {
     throw new Error("Invalid period");
   }
 
   const matchFilter = { business: new mongoose.Types.ObjectId(businessId) };
-  if (startDate) matchFilter.createdAt = { $gte: startDate, $lte: endDate };
+  if (startDate) {
+    matchFilter.createdAt = { $gte: startDate, $lte: endDate };
+  }
 
   let breakdown = [];
 
   if (groupFormat) {
+    const momentFormat = mongoToMomentFormatMap[groupFormat];
+
     breakdown = await BusinessView.aggregate([
       { $match: matchFilter },
       {
@@ -154,25 +166,26 @@ async function getBusinessViewsCount(businessId, period) {
           _id: 0,
           date: "$_id.groupDate",
           totalViews: 1,
-          uniqueViews: { $size: "$uniqueViewers" },
+          //uniqueViews: { $size: "$uniqueViewers" },
         },
       },
       { $sort: { date: 1 } },
     ]);
 
-    // Fill in missing dates with 0s
+    // Fill in missing dates
     const dateMap = new Map(breakdown.map((b) => [b.date, b]));
     const filledBreakdown = [];
+
     const current = moment(startDate);
     const end = moment(endDate);
 
     while (current <= end) {
-      const formatted = current.format(groupFormat.replace("%", ""));
+      const formatted = current.format(momentFormat);
       filledBreakdown.push(
         dateMap.get(formatted) || {
           date: formatted,
           totalViews: 0,
-          uniqueViews: 0,
+          //uniqueViews: 0,
         }
       );
       groupFormat === "%Y-%m" ? current.add(1, "month") : current.add(1, "day");
@@ -199,14 +212,16 @@ async function getBusinessViewsCount(businessId, period) {
 
   return {
     period,
-    startDate: startDate || "beginning",
-    endDate,
+    startDate: startDate ? moment(startDate).toISOString() : null,
+    endDate: moment(endDate).toISOString(),
     totalViews,
-    totalUniqueViews: uniqueViewKeys.size,
-    totalUniqueUsers: uniqueUsersSet.size,
+    //totalUniqueViews: uniqueViewKeys.size,
+    //totalUniqueUsers: uniqueUsersSet.size,
     breakdown,
   };
 }
+
+module.exports = { getBusinessViewsCount };
 
 async function getBusinessReviewStats(businessId, period) {
   let startDate;
