@@ -91,7 +91,7 @@ const businessSchema = new mongoose.Schema(
 
     holidayDates: [Date],
 
-    GST: { type: String },
+    gst: { type: String },
     photos: [String],
     ratings: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },
