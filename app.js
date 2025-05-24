@@ -60,6 +60,7 @@ const advertSlotRoutes = require("./routes/advertSlotRoutes");
 const advertRoutes = require("./routes/advertRoutes");
 const favouriteRoutes = require("./routes/favouriteRoutes");
 const slotPurchaseRoutes = require("./routes/slotPurchaseRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 
 // Route Mounting
 app.use("/authentication", authenticationRoutes); // login
@@ -72,6 +73,7 @@ app.use("/advertslots", advertSlotRoutes);
 app.use("/adverts", advertRoutes);
 app.use("/favourites", favouriteRoutes);
 app.use("/slotPurchases", slotPurchaseRoutes);
+app.use("/contact", contactRoutes);
 
 // Example Home
 app.get("/", (req, res) => {
