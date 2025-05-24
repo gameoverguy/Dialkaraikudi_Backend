@@ -51,54 +51,120 @@ async function trackBusinessView(businessId, ipAddress, userId) {
 }
 
 // Get views counts (total views, unique views, unique users) for a period
+// async function getBusinessViewsCount(businessId, period) {
+//   let startDate;
+//   const endDate = moment().format("YYYY-MM-DD");
+
+//   if (period === "weekly") {
+//     startDate = moment().subtract(7, "days").format("YYYY-MM-DD");
+//   } else if (period === "monthly") {
+//     startDate = moment().subtract(30, "days").format("YYYY-MM-DD");
+//   } else if (period === "yearly") {
+//     startDate = moment().subtract(365, "days").format("YYYY-MM-DD");
+//   } else if (period === "alltime") {
+//     startDate = null; // No filter on date
+//   } else {
+//     throw new Error("Invalid period specified");
+//   }
+
+//   const matchFilter = {
+//     business: businessId,
+//   };
+
+//   if (startDate) {
+//     matchFilter.date = { $gte: startDate, $lte: endDate };
+//   }
+
+//   const views = await BusinessView.find(matchFilter);
+
+//   const totalViews = views.length;
+
+//   // Unique views per day by (user or IP)
+//   // Use a Set of `date-user/ip` combos to get unique views
+//   const uniqueViewKeys = new Set();
+//   const uniqueUsersSet = new Set();
+
+//   views.forEach((v) => {
+//     const key = v.user
+//       ? `${v.date}-user-${v.user.toString()}`
+//       : `${v.date}-ip-${v.ipAddress}`;
+//     uniqueViewKeys.add(key);
+//     if (v.user) uniqueUsersSet.add(v.user.toString());
+//   });
+
+//   return {
+//     totalViews,
+//     //totalUniqueViews: uniqueViewKeys.size,
+//     totalUniqueUsers: uniqueUsersSet.size,
+//     startDate: startDate || "beginning",
+//     endDate,
+//     period,
+//   };
+// }
+
 async function getBusinessViewsCount(businessId, period) {
+  const endDate = moment().endOf("day").toDate();
   let startDate;
-  const endDate = moment().format("YYYY-MM-DD");
+
+  let groupFormat; // Determines how to group data
 
   if (period === "weekly") {
-    startDate = moment().subtract(7, "days").format("YYYY-MM-DD");
+    startDate = moment().subtract(6, "days").startOf("day").toDate(); // includes today
+    groupFormat = "%Y-%m-%d"; // daily
   } else if (period === "monthly") {
-    startDate = moment().subtract(30, "days").format("YYYY-MM-DD");
+    startDate = moment().subtract(29, "days").startOf("day").toDate();
+    groupFormat = "%Y-%m-%d"; // daily
   } else if (period === "yearly") {
-    startDate = moment().subtract(365, "days").format("YYYY-MM-DD");
-  } else if (period === "alltime") {
-    startDate = null; // No filter on date
+    startDate = moment().subtract(11, "months").startOf("month").toDate();
+    groupFormat = "%Y-%m"; // monthly
   } else {
     throw new Error("Invalid period specified");
   }
 
-  const matchFilter = {
-    business: businessId,
-  };
-
-  if (startDate) {
-    matchFilter.date = { $gte: startDate, $lte: endDate };
-  }
-
-  const views = await BusinessView.find(matchFilter);
-
-  const totalViews = views.length;
-
-  // Unique views per day by (user or IP)
-  // Use a Set of `date-user/ip` combos to get unique views
-  const uniqueViewKeys = new Set();
-  const uniqueUsersSet = new Set();
-
-  views.forEach((v) => {
-    const key = v.user
-      ? `${v.date}-user-${v.user.toString()}`
-      : `${v.date}-ip-${v.ipAddress}`;
-    uniqueViewKeys.add(key);
-    if (v.user) uniqueUsersSet.add(v.user.toString());
-  });
+  const viewsData = await BusinessView.aggregate([
+    {
+      $match: {
+        business: new mongoose.Types.ObjectId(businessId),
+        createdAt: { $gte: startDate, $lte: endDate },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          groupDate: {
+            $dateToString: { format: groupFormat, date: "$createdAt" },
+          },
+        },
+        totalViews: { $sum: 1 },
+        uniqueUsers: {
+          $addToSet: {
+            $cond: [
+              { $ifNull: ["$user", false] },
+              { $concat: ["user-", { $toString: "$user" }] },
+              { $concat: ["ip-", "$ipAddress"] },
+            ],
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        date: "$_id.groupDate",
+        totalViews: 1,
+        uniqueViews: { $size: "$uniqueUsers" },
+      },
+    },
+    {
+      $sort: { date: 1 },
+    },
+  ]);
 
   return {
-    totalViews,
-    totalUniqueViews: uniqueViewKeys.size,
-    totalUniqueUsers: uniqueUsersSet.size,
-    startDate: startDate || "beginning",
-    endDate,
     period,
+    startDate,
+    endDate,
+    breakdown: viewsData, // list of { date, totalViews, uniqueViews }
   };
 }
 
