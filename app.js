@@ -18,10 +18,6 @@ require("./cron_jobs/expireAds");
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "http://192.168.1.13:5173",
-  "http://192.168.1.12:5173",
-  "http://192.168.1.9:5173",
-  "http://192.168.1.37:5173",
   "https://lucky-choux-a6d99e.netlify.app",
 ];
 

@@ -65,6 +65,7 @@ exports.getAds = async (req, res) => {
   try {
     const { slotId, businessId } = req.query;
     const filter = {};
+    filter.isActive = true;
     if (slotId) filter.slotId = slotId;
     if (businessId) filter.businessId = businessId;
 
