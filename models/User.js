@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema(
       enum: ["user"],
       default: "user",
     },
-    password: { type: String, required: true },
+    googleAccount: { type: Boolean, default: false },
+    password: { type: String, required: false },
     otp: {
       code: { type: String },
       expiresAt: { type: Date },
@@ -22,7 +23,7 @@ const userSchema = new mongoose.Schema(
 
     name: { type: String, required: true, trim: true },
 
-    phone: { type: String, required: true },
+    phone: { type: String, required: false },
     avatarUrl: { type: String },
     isBlocked: { type: Boolean, default: false }, // to support block feature later
   },

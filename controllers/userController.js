@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
+const client = require("../utils/googleClient"); // new import
 
 exports.loginUser = async (req, res) => {
   try {
@@ -13,6 +14,12 @@ exports.loginUser = async (req, res) => {
     if (user.isBlocked)
       return res.status(403).json({ message: "Your account is blocked." });
 
+    if (user && user.googleAccount && !user.password) {
+      return res.status(400).json({
+        message: "You registered with Google. Please login using Google.",
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid password." });
 
@@ -23,7 +30,7 @@ exports.loginUser = async (req, res) => {
         userType: user.userType,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "10m" }
+      { expiresIn: "21d" }
     );
 
     res.clearCookie("userToken");
@@ -52,6 +59,86 @@ exports.loginUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.googleAuth = async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({ message: "Missing Google credential" });
+    }
+
+    // Verify token
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    console.log(payload);
+    const { email, name, picture } = payload;
+
+    if (!email || !name) {
+      return res.status(400).json({ message: "Invalid Google account" });
+    }
+
+    // Find or create user
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        googleAccount: true,
+        phone: "",
+        avatarUrl: picture,
+        userType: "user",
+        password: "", // empty for OAuth users
+      });
+    }
+
+    if (user.isBlocked) {
+      return res.status(403).json({ message: "Your account is blocked" });
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        userType: user.userType,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "21d" }
+    );
+
+    res.clearCookie("userToken");
+    res.clearCookie("adminToken");
+    res.clearCookie("businessToken");
+
+    res.cookie("userToken", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 21 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      message: "Google login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        userType: user.userType,
+        avatarUrl: user.avatarUrl || null,
+      },
+    });
+  } catch (error) {
+    console.error("Google Auth Error", error);
+    return res.status(500).json({ message: "Google authentication failed" });
   }
 };
 

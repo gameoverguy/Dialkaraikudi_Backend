@@ -40,6 +40,13 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json());
 
+// In your Express server.js or app.js before routes
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  next();
+});
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "12345",

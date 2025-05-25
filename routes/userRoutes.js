@@ -6,6 +6,8 @@ const pendingUserController = require("../controllers/pendingUserController");
 const verifyToken = require("../middleware/VerifyToken");
 const requireRole = require("../middleware/requireRole");
 
+router.post("/googleauth", userController.googleAuth);
+
 router.post("/login", userController.loginUser);
 
 router.post("/signup", pendingUserController.registerUser);

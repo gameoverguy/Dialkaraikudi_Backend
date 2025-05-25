@@ -35,7 +35,7 @@ exports.loginAdmin = async (req, res) => {
         role: admin.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "5m" }
+      { expiresIn: "7d" }
     );
 
     res.clearCookie("userToken");
@@ -201,7 +201,7 @@ exports.getDashboardData = async (req, res) => {
     const now = new Date();
 
     const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setDate(now.getDate() - 6); // last 7 days including today
     startOfWeek.setHours(0, 0, 0, 0);
 
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);

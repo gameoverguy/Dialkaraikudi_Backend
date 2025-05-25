@@ -9,8 +9,21 @@ exports.registerUser = async (req, res) => {
 
     // Check if already registered in User
     const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ message: "Email already registered." });
+    if (existingUser) {
+      if (!existingUser.password) {
+        // Account created via Google, no password set
+        return res
+          .status(400)
+          .json({
+            message:
+              "This email is registered via Google. Please log in using Google Sign-In.",
+          });
+      }
+
+      return res
+        .status(400)
+        .json({ message: "Email already registered. Please log in." });
+    }
 
     // Check if already pending
     const existingPending = await PendingUser.findOne({ email });
