@@ -7,6 +7,7 @@ const Business = require("../models/Business");
 const Review = require("../models/Review");
 const Category = require("../models/Category");
 const AdvertSlot = require("../models/AdvertSlot");
+const clearAuthCookies = require("../utils/clearAuthCookies");
 
 // Admin Login
 exports.loginAdmin = async (req, res) => {
@@ -38,9 +39,7 @@ exports.loginAdmin = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.clearCookie("userToken");
-    res.clearCookie("adminToken");
-    res.clearCookie("businessToken");
+    clearAuthCookies(res);
 
     // ✅ Set token in cookie
     res.cookie("adminToken", token, {

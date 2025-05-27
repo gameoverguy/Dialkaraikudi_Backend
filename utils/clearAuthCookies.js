@@ -2,10 +2,13 @@ const clearAuthCookies = (
   res,
   tokens = ["userToken", "businessToken", "adminToken"]
 ) => {
-  res.clearCookie(userToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
+  tokens.forEach((tokenName) => {
+    res.clearCookie(tokenName, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      path: "/", // optional, but helps ensure it matches the original
+    });
   });
 };
 
