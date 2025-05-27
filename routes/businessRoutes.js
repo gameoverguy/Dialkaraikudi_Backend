@@ -23,7 +23,7 @@ router.get("/", businessController.getAllBusinesses);
 router.get("/allbusiness", businessController.getAllBusinessesAdmin);
 router.get("/:id", businessController.getBusinessById);
 router.get(
-  "getbusinessforpanel/:id",
+  "/getbusinessforpanel/:id",
   businessController.getBusinessForPanelById
 );
 router.put("/:id", businessController.updateBusiness);
