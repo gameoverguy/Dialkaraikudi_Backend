@@ -22,6 +22,10 @@ router.post("/resendBusinessOtp", pendingBusinessController.resendBusinessOtp);
 router.get("/", businessController.getAllBusinesses);
 router.get("/allbusiness", businessController.getAllBusinessesAdmin);
 router.get("/:id", businessController.getBusinessById);
+router.get(
+  "getbusinessforpanel/:id",
+  businessController.getBusinessForPanelById
+);
 router.put("/:id", businessController.updateBusiness);
 router.delete("/:id", businessController.deleteBusiness);
 router.post("/bulkuploadbusiness", businessController.bulkUploadBusinesses);

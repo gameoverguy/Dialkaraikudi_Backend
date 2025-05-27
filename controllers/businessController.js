@@ -304,6 +304,61 @@ exports.getBusinessById = async (req, res) => {
   }
 };
 
+// Get Single Business by ID (WITH Reviews and User Info)
+exports.getBusinessForPanelById = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const tokenFromHeader =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.split(" ")[1]
+        : null;
+
+    const token = req.cookies?.userToken || tokenFromHeader;
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log(decoded);
+      req.user = decoded; // So req.user._id becomes available
+    } catch (err) {}
+
+    const { id } = req.params;
+
+    // Fetch business with populated category
+    const business = await Business.findById(id).populate(
+      "category",
+      "displayName iconUrl"
+    );
+
+    console.log("266", business);
+
+    if (!business) {
+      return res.status(404).json({
+        success: false,
+        message: "Business not found",
+      });
+    }
+
+    // Fetch reviews for the business with user info
+    const reviews = await Review.find({ business: id })
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    // Return business, reviews,
+    res.status(200).json({
+      success: true,
+      data: {
+        business,
+        reviews,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // Update Business (Partial Update - Any Field)
 exports.updateBusiness = async (req, res) => {
   const { id } = req.params;
