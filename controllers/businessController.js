@@ -11,6 +11,7 @@ const {
   getBusinessViewsCount,
   getBusinessReviewStats,
 } = require("./trackBusinessView");
+const clearAuthCookies = require("../utils/clearAuthCookies");
 
 // Business Signup (Simplified)
 exports.businessSignup = async (req, res) => {
@@ -61,12 +62,10 @@ exports.login = async (req, res) => {
         userType: business.userType,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "5m" }
+      { expiresIn: "14d" }
     );
 
-    res.clearCookie("userToken");
-    res.clearCookie("adminToken");
-    res.clearCookie("businessToken");
+    clearAuthCookies(res);
 
     // ✅ Set token in cookie
     res.cookie("businessToken", token, {

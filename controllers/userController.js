@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
 const client = require("../utils/googleClient"); // new import
+const clearAuthCookies = require("../utils/clearAuthCookies");
 
 exports.loginUser = async (req, res) => {
   try {
@@ -33,9 +34,7 @@ exports.loginUser = async (req, res) => {
       { expiresIn: "21d" }
     );
 
-    res.clearCookie("userToken");
-    res.clearCookie("adminToken");
-    res.clearCookie("businessToken");
+    clearAuthCookies(res);
 
     // ✅ Set token in cookie
     res.cookie("userToken", token, {
@@ -99,7 +98,10 @@ exports.googleAuth = async (req, res) => {
       });
     }
 
+    console.log("1");
+
     if (user.isBlocked) {
+      console.log("2");
       return res.status(403).json({ message: "Your account is blocked" });
     }
 
@@ -113,9 +115,7 @@ exports.googleAuth = async (req, res) => {
       { expiresIn: "21d" }
     );
 
-    res.clearCookie("userToken");
-    res.clearCookie("adminToken");
-    res.clearCookie("businessToken");
+    clearAuthCookies(res);
 
     res.cookie("userToken", token, {
       httpOnly: true,
