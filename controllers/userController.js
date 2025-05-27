@@ -51,8 +51,8 @@ exports.loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
-        userType: user.userType,
+        phone: user.phone, //not required
+        userType: user.userType, //not required
         avatarUrl: user.avatarUrl || null,
       },
     });
@@ -174,6 +174,12 @@ exports.forgotPassword = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found." });
+
+    if (user && user.googleAccount && !user.password) {
+      return res.status(400).json({
+        message: "You registered with Google. Please login using Google.",
+      });
+    }
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
     const expiresAt = Date.now() + 2 * 60 * 1000; // 2 minutes validity
