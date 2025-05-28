@@ -7,20 +7,16 @@ const verifyToken = require("../middleware/VerifyToken");
 const requireRole = require("../middleware/requireRole");
 
 router.post("/googleauth", userController.googleAuth);
-
 router.post("/login", userController.loginUser);
-
 router.post("/signup", pendingUserController.registerUser);
 router.post(
   "/verifyOtpAndCreateAccount",
   pendingUserController.verifyOtpAndCreateAccount
 );
 router.post("/resendregisterotp", pendingUserController.resendOtp);
-
 router.post("/forgotpassword", userController.forgotPassword);
 router.post("/verifyotp", userController.verifyOtp);
 router.post("/resetpassword", userController.resetPassword);
-
 router.get("/", verifyToken, requireRole("admin"), userController.getAllUsers);
 router.get(
   "/:id",

@@ -51,7 +51,7 @@ exports.loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone, //not required
+        phone: user.phone,
         userType: user.userType, //not required
         avatarUrl: user.avatarUrl || null,
       },
@@ -228,7 +228,11 @@ exports.verifyOtp = async (req, res) => {
 // Reset Password - Step 3
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, newPassword, confirmPassword } = req.body;
+    const { email, newPassword, confirmPassword, otp } = req.body;
+
+    if (!email || !newPassword || !confirmPassword || !otp) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match." });
@@ -241,6 +245,11 @@ exports.resetPassword = async (req, res) => {
       return res
         .status(400)
         .json({ message: "OTP verification required before password reset." });
+    }
+
+    // Validate OTP
+    if (!user.otp.code || user.otp.code !== otp) {
+      return res.status(400).json({ message: "Invalid or expired OTP." });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);

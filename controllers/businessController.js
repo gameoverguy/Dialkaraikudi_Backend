@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
       httpOnly: true,
       secure: true, // required for HTTPS
       sameSite: "None", // allows cross-site
-      maxAge: 14 * 24 * 60 * 60 * 1000, // 21 days
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
     });
 
     res.status(200).json({
@@ -103,7 +103,7 @@ exports.forgotPassword = async (req, res) => {
     }
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
-    const expiresAt = Date.now() + 5 * 60 * 1000;
+    const expiresAt = Date.now() + 2 * 60 * 1000;
 
     business.otp = { code: otp, expiresAt };
     await business.save();
