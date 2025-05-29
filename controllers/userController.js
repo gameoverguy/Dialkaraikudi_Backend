@@ -300,9 +300,11 @@ exports.updateUser = async (req, res) => {
     user.isBlocked = isBlocked ?? user.isBlocked;
 
     await user.save();
-    res.status(200).json({ message: "User updated successfully." });
+    res
+      .status(200)
+      .json({ success: true, message: "User updated successfully." });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: true, message: error.message });
   }
 };
 
