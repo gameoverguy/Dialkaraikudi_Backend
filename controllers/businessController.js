@@ -285,7 +285,8 @@ exports.getBusinessById = async (req, res) => {
     // Fetch reviews for the business with user info
     const reviews = await Review.find({ business: id })
       .populate("user", "name email")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .then((reviews) => reviews.filter((review) => review.user)); // filter out null users
 
     // Return business, reviews, and the unique view flag
     res.status(200).json({
