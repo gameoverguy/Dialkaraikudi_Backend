@@ -423,7 +423,7 @@ exports.searchBusinesses = async (req, res) => {
       {
         $search: {
           index: "default", // Name of your search index
-          text: {
+          autocomplete: {
             query: keyword,
             path: [
               "businessName",
