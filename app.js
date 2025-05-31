@@ -17,6 +17,9 @@ require("./cron_jobs/expireAds");
 // Allowed frontend origins
 const allowedOrigins = [
   "http://localhost:5173",
+  "www.dialkaraikudi.com",
+  "https://www.dialkaraikudi.com",
+  "https://dialkaraikudi.com",
   "http://localhost:5174",
   "https://lucky-choux-a6d99e.netlify.app",
   "https://keen-gumption-8e720c.netlify.app",
