@@ -419,35 +419,89 @@ exports.searchBusinesses = async (req, res) => {
       });
     }
 
-    // Find matching category IDs
-    const matchingCategories = await Category.find({
-      $or: [
-        { categoryName: { $regex: keyword, $options: "i" } },
-        { displayName: { $regex: keyword, $options: "i" } },
-        { description: { $regex: keyword, $options: "i" } },
-      ],
-    }).select("_id");
-
-    const categoryIds = matchingCategories.map((cat) => cat._id);
-
-    // Build filter (include verified)
-    const filter = {
-      verified: true,
-      $or: [
-        { businessName: { $regex: keyword, $options: "i" } },
-        { description: { $regex: keyword, $options: "i" } },
-        { "address.formattedAddress": { $regex: keyword, $options: "i" } },
-        ...(categoryIds.length > 0 ? [{ category: { $in: categoryIds } }] : []),
-      ],
-    };
-
-    const businesses = await Business.find(filter).populate("category");
+    const businesses = await Business.aggregate([
+      {
+        $search: {
+          index: "default", // Name of your search index
+          text: {
+            query: keyword,
+            path: [
+              "businessName",
+              "description",
+              "address.formattedAddress",
+              "tags",
+            ],
+            fuzzy: {
+              maxEdits: 2,
+              prefixLength: 2,
+            },
+          },
+        },
+      },
+      { $match: { verified: true } },
+      { $limit: 20 },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $unwind: {
+          path: "$category",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    ]);
 
     res.status(200).json({ success: true, data: businesses });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// exports.searchBusinesses = async (req, res) => {
+//   try {
+//     const { keyword } = req.params;
+
+//     if (!keyword) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Keyword is required",
+//       });
+//     }
+
+//     // Find matching category IDs
+//     const matchingCategories = await Category.find({
+//       $or: [
+//         { categoryName: { $regex: keyword, $options: "i" } },
+//         { displayName: { $regex: keyword, $options: "i" } },
+//         { description: { $regex: keyword, $options: "i" } },
+//       ],
+//     }).select("_id");
+
+//     const categoryIds = matchingCategories.map((cat) => cat._id);
+
+//     // Build filter (include verified)
+//     const filter = {
+//       verified: true,
+//       $or: [
+//         { businessName: { $regex: keyword, $options: "i" } },
+//         { description: { $regex: keyword, $options: "i" } },
+//         { "address.formattedAddress": { $regex: keyword, $options: "i" } },
+//         ...(categoryIds.length > 0 ? [{ category: { $in: categoryIds } }] : []),
+//       ],
+//     };
+
+//     const businesses = await Business.find(filter).populate("category");
+
+//     res.status(200).json({ success: true, data: businesses });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
 
 exports.bulkUploadBusinesses = async (req, res) => {
   try {
