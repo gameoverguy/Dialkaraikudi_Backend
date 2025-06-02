@@ -2,8 +2,15 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
+const verifyToken = require("../middleware/VerifyToken");
+const requireRole = require("../middleware/requireRole");
 
-router.get("/dashboard", adminController.getDashboardData);
+router.get(
+  "/dashboard",
+  verifyToken,
+  requireRole("admin"),
+  adminController.getDashboardData
+);
 
 router.post("/login", adminController.loginAdmin);
 // Admin Forgot Password
