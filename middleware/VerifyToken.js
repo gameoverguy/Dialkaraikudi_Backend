@@ -12,38 +12,15 @@ const verifyToken = async (req, res, next) => {
         ? authHeader.split(" ")[1]
         : null;
 
-    const token =
-      req.cookies?.userToken ||
-      req.cookies?.adminToken ||
-      req.cookies?.businessToken ||
-      tokenFromHeader;
+    const token = tokenFromHeader;
 
     if (!token) {
-      res.clearCookie("userToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-      });
-
-      res.clearCookie("adminToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-      });
-
-      res.clearCookie("businessToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-      });
       return res
         .status(401)
-        .json({ isTokenValid: false, message: "Token missing or expired." });
+        .json({ isTokenValid: false, message: "Token missing" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    console.log(decoded);
 
     let user;
     if (decoded.userType === "user") {
@@ -53,8 +30,6 @@ const verifyToken = async (req, res, next) => {
     } else if (decoded.userType === "admin") {
       user = await Admin.findById(decoded.adminId);
     }
-
-    console.log(decoded);
 
     if (!user) {
       return res

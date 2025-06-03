@@ -42,12 +42,12 @@ exports.loginAdmin = async (req, res) => {
     clearAuthCookies(res);
 
     // ✅ Set token in cookie
-    res.cookie("adminToken", token, {
-      httpOnly: true,
-      secure: true, // required for HTTPS
-      sameSite: "None", // allows cross-site
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 21 days
-    });
+    // res.cookie("adminToken", token, {
+    //   httpOnly: true,
+    //   secure: true, // required for HTTPS
+    //   sameSite: "None", // allows cross-site
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 21 days
+    // });
 
     res.status(200).json({
       message: "Login successful.",

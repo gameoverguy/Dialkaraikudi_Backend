@@ -37,12 +37,12 @@ exports.loginUser = async (req, res) => {
     clearAuthCookies(res);
 
     // ✅ Set token in cookie
-    res.cookie("userToken", token, {
-      httpOnly: true,
-      secure: true, // required for HTTPS
-      sameSite: "None", // allows cross-site
-      maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days
-    });
+    // res.cookie("userToken", token, {
+    //   httpOnly: true,
+    //   secure: false, // required for HTTPS
+    //   sameSite: "None", // allows cross-site
+    //   maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days
+    // });
 
     res.status(200).json({
       message: "Login successful.",
@@ -117,12 +117,12 @@ exports.googleAuth = async (req, res) => {
 
     clearAuthCookies(res);
 
-    res.cookie("userToken", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      maxAge: 21 * 24 * 60 * 60 * 1000,
-    });
+    // res.cookie("userToken", token, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "None",
+    //   maxAge: 21 * 24 * 60 * 60 * 1000,
+    // });
 
     return res.status(200).json({
       message: "Google login successful",
