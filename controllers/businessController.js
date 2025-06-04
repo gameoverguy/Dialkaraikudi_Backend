@@ -449,6 +449,43 @@ exports.searchBusinesses = async (req, res) => {
   }
 };
 
+// GET /api/search/suggestions?query=somevalue
+exports.getSearchSuggestions = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Query is required" });
+    }
+
+    // Match categories
+    const matchedCategories = await Category.find({
+      $or: [
+        { categoryName: { $regex: query, $options: "i" } },
+        { displayName: { $regex: query, $options: "i" } },
+      ],
+    }).select("_id categoryName displayName");
+
+    // Match business names
+    const matchedBusinesses = await Business.find({
+      verified: true,
+      businessName: { $regex: query, $options: "i" },
+    }).select("_id businessName category");
+
+    res.status(200).json({
+      success: true,
+      suggestions: {
+        categories: matchedCategories,
+        businesses: matchedBusinesses,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.bulkUploadBusinesses = async (req, res) => {
   try {
     const businesses = req.body;
@@ -549,24 +586,6 @@ exports.getBusinessDashboard = async (req, res) => {
       businessId,
       "yearly"
     );
-
-    // const viewsweeklySummary = await getBusinessViewsCount(
-    //   business._id,
-    //   "weekly"
-    // );
-    // const viewsmonthlySummary = await getBusinessViewsCount(
-    //   business._id,
-    //   "monthly"
-    // );
-    // const viewsyearlySummary = await getBusinessViewsCount(
-    //   business._id,
-    //   "yearly"
-    // );
-
-    // const viewsAllTimeSummary = await getBusinessViewsCount(
-    //   business._id,
-    //   "alltime"
-    // );
 
     const [weekly, monthly, yearly, alltime] = await Promise.all([
       getBusinessViewsCount(businessId, "weekly"),

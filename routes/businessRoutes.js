@@ -39,6 +39,9 @@ router.get(
 );
 // currently used to get all business for listing page...could be removed
 router.get("/allbusiness", businessController.getAllBusinessesAdmin);
+
+router.get("/searchsuggestions", businessController.getSearchSuggestions);
+
 //get the details of that particular business with counting views
 router.get("/:id", businessController.getBusinessById);
 //without couting views
@@ -60,12 +63,13 @@ router.delete(
   requireRole("admin"),
   businessController.deleteBusiness
 );
-router.post(
-  "/bulkuploadbusiness",
-  verifyToken,
-  requireRole("admin"),
-  businessController.bulkUploadBusinesses
-);
+// router.post(
+//   "/bulkuploadbusiness",
+//   verifyToken,
+//   requireRole("admin"),
+//   businessController.bulkUploadBusinesses
+// );
+router.post("/bulkuploadbusiness", businessController.bulkUploadBusinesses);
 router.get("/category/:id", businessController.getBusinessesByCategory);
 router.get("/search/:keyword", businessController.searchBusinesses);
 
