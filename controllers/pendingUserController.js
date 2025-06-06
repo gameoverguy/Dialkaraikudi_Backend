@@ -12,12 +12,9 @@ exports.registerUser = async (req, res) => {
     if (existingUser) {
       if (!existingUser.password) {
         // Account created via Google, no password set
-        return res
-          .status(400)
-          .json({
-            message:
-              "This email is registered via Google. Please log in using Google Sign-In.",
-          });
+        return res.status(400).json({
+          message: "Already registered via Google. Use Google Sign-In",
+        });
       }
 
       return res
