@@ -14,6 +14,8 @@ const verifyToken = async (req, res, next) => {
 
     const token = tokenFromHeader;
 
+    console.log(token);
+
     if (!token) {
       return res
         .status(401)

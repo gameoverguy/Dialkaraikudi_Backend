@@ -99,7 +99,20 @@ exports.deleteAd = async (req, res) => {
     const deletedAd = await Ad.findByIdAndDelete(id);
     if (!deletedAd) return res.status(404).json({ message: "Ad not found" });
 
-    res.json({ message: "Ad deleted successfully" });
+    const slot = await AdvertSlot.findById(deletedAd.slotId);
+    console.log(slot);
+
+    if (!slot)
+      return res.status(404).json({ message: "Advert slot not found" });
+
+    slot.allowedBusinesses = slot.allowedBusinesses.filter(
+      (id) => id.toString() !== deletedAd.businessId.toString()
+    );
+    await slot.save();
+
+    res.json({
+      message: "Ad deleted successfully and Business removed from slot",
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
