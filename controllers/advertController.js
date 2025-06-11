@@ -71,7 +71,8 @@ exports.getAds = async (req, res) => {
 
     const ads = await Ad.find(filter)
       .populate("slotId", "name page")
-      .populate("businessId", "businessName");
+      .populate("businessId", "businessName")
+      .then((ads) => ads.filter((ad) => ad.businessId));
 
     res.json(ads);
   } catch (error) {
