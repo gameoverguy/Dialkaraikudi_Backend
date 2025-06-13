@@ -5,7 +5,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "karthick251087@gmail.com";
 
 const contactUs = async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body;
+    const { name, email, subject, message, phone } = req.body;
 
     // Basic validation
     if (!name || !email || !message) {
@@ -19,6 +19,7 @@ const contactUs = async (req, res) => {
     const newMessage = await ContactMessage.create({
       name,
       email,
+      phone,
       subject,
       message,
     });
@@ -40,6 +41,10 @@ const contactUs = async (req, res) => {
         <tr>
           <td style="padding: 8px 0;"><strong>Email:</strong></td>
           <td><a href="mailto:${email}" style="color: #3182ce;">${email}</a></td>
+        </tr>
+         <tr>
+          <td style="padding: 8px 0;"><strong>Email:</strong></td>
+          <td><a href="mailto:${phone}" style="color: #3182ce;">${phone}</a></td>
         </tr>
         ${
           subject

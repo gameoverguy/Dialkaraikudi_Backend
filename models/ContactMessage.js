@@ -16,6 +16,10 @@ const contactMessageSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  phone: {
+    type: String,
+    default: "",
+  },
   message: {
     type: String,
     required: true,
