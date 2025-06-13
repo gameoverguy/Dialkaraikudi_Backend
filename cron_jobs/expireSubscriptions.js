@@ -25,10 +25,10 @@ const disableExpiredSubscriptions = async () => {
       { $set: { status: "expired" } }
     );
 
-    // Clear currentSubscription in businesses pointing to these expired subs
+    // Clear currentSubscription and reset verified
     await Business.updateMany(
       { currentSubscription: { $in: expiredSubIds } },
-      { $set: { currentSubscription: null } }
+      { $set: { currentSubscription: null, verified: false } }
     );
 
     console.log(

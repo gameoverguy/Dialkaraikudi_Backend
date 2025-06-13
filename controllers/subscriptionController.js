@@ -19,7 +19,7 @@ exports.subscribe = async (req, res) => {
         .status(404)
         .json({ success: false, error: "Business not found" });
 
-    // Optionally, check if they already have an active subscription
+    // Check if already has an active subscription
     const existingActive = await Subscription.findOne({
       business: businessId,
       status: "active",
@@ -44,8 +44,9 @@ exports.subscribe = async (req, res) => {
       status: "active",
     });
 
-    // Update business's currentSubscription (if you're using that field)
+    // Update business currentSubscription and verified
     business.currentSubscription = subscription._id;
+    business.verified = true;
     await business.save();
 
     res.status(201).json({ success: true, data: subscription });
@@ -63,12 +64,10 @@ exports.getBusinessSubscription = async (req, res) => {
       .populate("plan");
 
     if (!subscription) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          error: "No subscription found for this business",
-        });
+      return res.status(404).json({
+        success: false,
+        error: "No subscription found for this business",
+      });
     }
 
     res.status(200).json({ success: true, data: subscription });

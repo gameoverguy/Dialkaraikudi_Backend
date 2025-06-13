@@ -166,7 +166,7 @@ async function getBusinessViewsCount(businessId, period) {
           _id: 0,
           date: "$_id.groupDate",
           totalViews: 1,
-          //uniqueViews: { $size: "$uniqueViewers" },
+          uniqueViews: { $size: "$uniqueViewers" },
         },
       },
       { $sort: { date: 1 } },
@@ -185,7 +185,7 @@ async function getBusinessViewsCount(businessId, period) {
         dateMap.get(formatted) || {
           date: formatted,
           totalViews: 0,
-          //uniqueViews: 0,
+          uniqueViews: 0,
         }
       );
       groupFormat === "%Y-%m" ? current.add(1, "month") : current.add(1, "day");
@@ -215,8 +215,8 @@ async function getBusinessViewsCount(businessId, period) {
     startDate: startDate ? moment(startDate).toISOString() : null,
     endDate: moment(endDate).toISOString(),
     totalViews,
-    //totalUniqueViews: uniqueViewKeys.size,
-    //totalUniqueUsers: uniqueUsersSet.size,
+    totalUniqueViews: uniqueViewKeys.size,
+    totalUniqueUsers: uniqueUsersSet.size,
     breakdown,
   };
 }
