@@ -43,8 +43,8 @@ const contactUs = async (req, res) => {
           <td><a href="mailto:${email}" style="color: #3182ce;">${email}</a></td>
         </tr>
          <tr>
-          <td style="padding: 8px 0;"><strong>Email:</strong></td>
-          <td><a href="mailto:${phone}" style="color: #3182ce;">${phone}</a></td>
+          <td style="padding: 8px 0;"><strong>Phone:</strong></td>
+          <td>${phone}</td>
         </tr>
         ${
           subject
