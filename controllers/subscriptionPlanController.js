@@ -1,5 +1,5 @@
 // ------------------- controllers/subscriptionPlanController.js -------------------
-const SubscriptionPlan = require("./SubscriptionPlan.");
+const SubscriptionPlan = require("../models/SubscriptionPlan");
 
 exports.createPlan = async (req, res) => {
   try {

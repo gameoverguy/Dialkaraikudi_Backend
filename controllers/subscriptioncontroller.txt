@@ -1,0 +1,78 @@
+🚀 POST /subscriptions/subscribe
+📝 Subscribe a business to a plan
+
+URL:
+
+/subscriptions/subscribe
+Method:
+
+POST
+Headers:
+
+Content-Type: application/json
+Body:
+
+{
+  "businessId": "BUSINESS_OBJECT_ID",
+  "planId": "PLAN_OBJECT_ID"
+}
+Success Response:
+
+{
+  "success": true,
+  "data": {
+    "_id": "SUBSCRIPTION_OBJECT_ID",
+    "business": "BUSINESS_OBJECT_ID",
+    "plan": "PLAN_OBJECT_ID",
+    "startDate": "2025-06-13T00:00:00.000Z",
+    "endDate": "2025-07-13T00:00:00.000Z",
+    "status": "active",
+    "__v": 0
+  }
+}
+Failure Example (Plan not found):
+
+{
+  "success": false,
+  "error": "Plan not found"
+}
+Failure Example (Business already has active subscription):
+
+{
+  "success": false,
+  "error": "Business already has an active subscription"
+}
+🚀 GET /subscriptions/subscription/:businessId
+📝 Get the latest subscription of a business
+
+URL:
+
+/subscriptions/subscription/BUSINESS_OBJECT_ID
+Method:
+
+GET
+Success Response:
+
+{
+  "success": true,
+  "data": {
+    "_id": "SUBSCRIPTION_OBJECT_ID",
+    "business": "BUSINESS_OBJECT_ID",
+    "plan": {
+      "_id": "PLAN_OBJECT_ID",
+      "name": "Premium Plan",
+      "duration": 30,
+      "price": 999
+    },
+    "startDate": "2025-06-13T00:00:00.000Z",
+    "endDate": "2025-07-13T00:00:00.000Z",
+    "status": "active",
+    "__v": 0
+  }
+}
+Failure Example (No subscription found):
+
+{
+  "success": false,
+  "error": "No subscription found for this business"
+}

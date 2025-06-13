@@ -258,10 +258,15 @@ exports.getBusinessById = async (req, res) => {
     const { id } = req.params;
 
     // Fetch business with populated category
-    const business = await Business.findById(id).populate(
-      "category",
-      "displayName iconUrl"
-    );
+    // const business = await Business.findById(id).populate(
+    //   "category",
+    //   "displayName iconUrl"
+    // );
+
+    const business = await Business.findOne({
+      _id: id,
+      verified: true,
+    }).populate("category", "displayName iconUrl");
 
     console.log("266", business);
 

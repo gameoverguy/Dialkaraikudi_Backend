@@ -31,6 +31,11 @@ const businessSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
+    currentSubscription: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subscription",
+      default: null,
+    },
 
     contactDetails: {
       phone: { type: String },

@@ -1,5 +1,6 @@
 const cron = require("node-cron");
 const Subscription = require("../models/Subscription");
+const Business = require("../models/Business");
 
 const disableExpiredSubscriptions = async () => {
   try {
@@ -16,15 +17,22 @@ const disableExpiredSubscriptions = async () => {
       return;
     }
 
-    // Update status to expired
     const expiredSubIds = expiredSubscriptions.map((sub) => sub._id);
+
+    // Mark subscriptions as expired
     await Subscription.updateMany(
       { _id: { $in: expiredSubIds } },
       { $set: { status: "expired" } }
     );
 
+    // Clear currentSubscription in businesses pointing to these expired subs
+    await Business.updateMany(
+      { currentSubscription: { $in: expiredSubIds } },
+      { $set: { currentSubscription: null } }
+    );
+
     console.log(
-      `✅ Marked ${expiredSubscriptions.length} subscriptions as expired`
+      `✅ Marked ${expiredSubscriptions.length} subscriptions as expired and cleared related currentSubscription`
     );
   } catch (err) {
     console.error("❌ Error expiring subscriptions:", err);

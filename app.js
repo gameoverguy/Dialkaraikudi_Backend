@@ -74,6 +74,7 @@ const favouriteRoutes = require("./routes/favouriteRoutes");
 const slotPurchaseRoutes = require("./routes/slotPurchaseRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const subscriptions = require("./routes/subscriptionRoutes");
 
 // Route Mounting
 app.use("/authentication", authenticationRoutes); // login
@@ -88,6 +89,7 @@ app.use("/favourites", favouriteRoutes);
 app.use("/slotPurchases", slotPurchaseRoutes);
 app.use("/contact", contactRoutes);
 app.use("/payment", paymentRoutes);
+app.use("/subscriptions", subscriptions);
 
 // Example Home
 app.get("/", (req, res) => {

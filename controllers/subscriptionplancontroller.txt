@@ -1,0 +1,156 @@
+🚀 POST /subscriptions/subscribe
+📝 Subscribe a business to a plan
+
+Request:
+
+POST /subscriptions/subscribe
+Content-Type: application/json
+json
+Copy
+Edit
+{
+  "businessId": "BUSINESS_OBJECT_ID",
+  "planId": "PLAN_OBJECT_ID"
+}
+Example success response:
+json
+Copy
+Edit
+{
+  "success": true,
+  "data": {
+    "_id": "SUBSCRIPTION_OBJECT_ID",
+    "business": "BUSINESS_OBJECT_ID",
+    "plan": "PLAN_OBJECT_ID",
+    "startDate": "2025-06-13T00:00:00.000Z",
+    "endDate": "2025-07-13T00:00:00.000Z",
+    "status": "active",
+    "__v": 0
+  }
+}
+🚀 GET /subscriptions/subscription/:businessId
+📝 Get latest subscription for a business
+
+Request:
+
+GET /subscriptions/subscription/BUSINESS_OBJECT_ID
+Example success response:
+json
+Copy
+Edit
+{
+  "success": true,
+  "data": {
+    "_id": "SUBSCRIPTION_OBJECT_ID",
+    "business": "BUSINESS_OBJECT_ID",
+    "plan": {
+      "_id": "PLAN_OBJECT_ID",
+      "name": "Premium Plan",
+      "duration": 30,
+      "price": 999
+    },
+    "startDate": "2025-06-13T00:00:00.000Z",
+    "endDate": "2025-07-13T00:00:00.000Z",
+    "status": "active",
+    "__v": 0
+  }
+}
+🚀 POST /subscriptions/plans
+📝 Create a new subscription plan
+
+Request:
+
+POST /subscriptions/plans
+Content-Type: application/json
+json
+Copy
+Edit
+{
+  "name": "Premium Plan",
+  "duration": 30,
+  "price": 999
+}
+Example success response:
+json
+Copy
+Edit
+{
+  "success": true,
+  "data": {
+    "_id": "PLAN_OBJECT_ID",
+    "name": "Premium Plan",
+    "duration": 30,
+    "price": 999,
+    "__v": 0
+  }
+}
+🚀 GET /subscriptions/plans
+📝 Get all subscription plans
+
+Request:
+
+GET /subscriptions/plans
+Example success response:
+json
+Copy
+Edit
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "PLAN_OBJECT_ID",
+      "name": "Premium Plan",
+      "duration": 30,
+      "price": 999,
+      "__v": 0
+    },
+    {
+      "_id": "ANOTHER_PLAN_OBJECT_ID",
+      "name": "Basic Plan",
+      "duration": 15,
+      "price": 499,
+      "__v": 0
+    }
+  ]
+}
+🚀 PUT /subscriptions/plans/:id
+📝 Update a subscription plan
+
+Request:
+
+PUT /subscriptions/plans/PLAN_OBJECT_ID
+Content-Type: application/json
+json
+Copy
+Edit
+{
+  "price": 1099
+}
+Example success response:
+json
+Copy
+Edit
+{
+  "success": true,
+  "data": {
+    "_id": "PLAN_OBJECT_ID",
+    "name": "Premium Plan",
+    "duration": 30,
+    "price": 1099,
+    "__v": 0
+  }
+}
+🚀 DELETE /subscriptions/plans/:id
+📝 Delete a subscription plan
+
+Request:
+
+DELETE /subscriptions/plans/PLAN_OBJECT_ID
+Example success response:
+json
+Copy
+Edit
+{
+  "success": true,
+  "message": "Plan deleted"
+}
