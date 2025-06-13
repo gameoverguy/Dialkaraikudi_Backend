@@ -196,7 +196,10 @@ exports.getDashboardData = async (req, res) => {
       .populate("user", "name")
       .populate("business", "businessName")
       .select("rating comment createdAt")
-      .then((reviews) => reviews.filter((review) => review.user)); // filter out null users;
+      .lean()
+      .then((reviews) =>
+        reviews.filter((review) => review.user && review.business)
+      );
 
     const now = new Date();
 

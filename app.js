@@ -11,8 +11,9 @@ connectDB(); // MongoDB connection
 
 const app = express();
 
-// ✅ Load the cron job
+// ✅ Load the cron jobs
 require("./cron_jobs/expireAds");
+require("./cron_jobs/expireSubscriptions");
 
 // Allowed frontend origins
 const allowedOrigins = [

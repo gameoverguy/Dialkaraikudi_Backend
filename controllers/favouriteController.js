@@ -50,7 +50,9 @@ exports.getUserFavourites = async (req, res) => {
   try {
     const { user } = req.query;
 
-    const favourites = await Favourite.find({ user }).populate("business");
+    const favourites = await Favourite.find({ user })
+      .populate("business")
+      .then((favs) => favs.filter((fav) => fav.business)); // filter out nulls
 
     res.status(200).json({ success: true, data: favourites });
   } catch (err) {
