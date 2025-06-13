@@ -17,12 +17,10 @@ const disableExpiredAds = async () => {
       return;
     }
 
-    // Deactivate all expired ads
     const expiredAdIds = expiredAds.map((ad) => ad._id);
-    await Advert.updateMany(
-      { _id: { $in: expiredAdIds } },
-      { $set: { isActive: false } }
-    );
+
+    // DELETE expired ads
+    await Advert.deleteMany({ _id: { $in: expiredAdIds } });
 
     // Remove corresponding businesses from allowedBusinesses in their slots
     for (const ad of expiredAds) {
@@ -33,14 +31,14 @@ const disableExpiredAds = async () => {
     }
 
     console.log(
-      `✅ Deactivated ${expiredAds.length} expired ads and updated their slots`
+      `✅ Deleted ${expiredAds.length} expired ads and updated their slots`
     );
   } catch (err) {
-    console.error("❌ Error disabling expired ads and updating slots:", err);
+    console.error("❌ Error deleting expired ads and updating slots:", err);
   }
 };
 
-// Run every hour (or change to any desired interval)
+// Run every day at midnight (or adjust as needed)
 cron.schedule("0 0 * * *", disableExpiredAds, {
   timezone: "Asia/Kolkata",
 });
