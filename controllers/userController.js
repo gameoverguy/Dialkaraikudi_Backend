@@ -96,6 +96,12 @@ exports.googleAuth = async (req, res) => {
         userType: "user",
         password: "", // empty for OAuth users
       });
+    } else {
+      // Existing user -> optionally update avatarUrl if empty
+      if (!user.avatarUrl) {
+        user.avatarUrl = picture;
+        await user.save();
+      }
     }
 
     console.log("1");
