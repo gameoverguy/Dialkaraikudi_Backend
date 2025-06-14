@@ -19,6 +19,18 @@ exports.subscribe = async (req, res) => {
         .status(404)
         .json({ success: false, error: "Business not found" });
 
+    // Check if business.currentSubscription is stale (points to expired sub)
+    if (business.currentSubscription) {
+      const currentSub = await Subscription.findById(
+        business.currentSubscription
+      );
+      if (!currentSub || currentSub.status !== "active") {
+        business.currentSubscription = null;
+        business.verified = false;
+        await business.save();
+      }
+    }
+
     // Check if already has an active subscription
     const existingActive = await Subscription.findOne({
       business: businessId,
@@ -52,6 +64,53 @@ exports.subscribe = async (req, res) => {
     res.status(201).json({ success: true, data: subscription });
   } catch (err) {
     console.error("❌ Subscription error:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.unsubscribe = async (req, res) => {
+  try {
+    const { businessId } = req.body;
+
+    // Validate business
+    const business = await Business.findById(businessId);
+    if (!business)
+      return res
+        .status(404)
+        .json({ success: false, error: "Business not found" });
+
+    // Check if business has an active subscription
+    if (!business.currentSubscription) {
+      return res.status(400).json({
+        success: false,
+        error: "Business does not have an active subscription",
+      });
+    }
+
+    // Expire the current subscription (without changing endDate)
+    const updateResult = await Subscription.updateOne(
+      { _id: business.currentSubscription, status: "active" },
+      { $set: { status: "expired" } }
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      return res.status(400).json({
+        success: false,
+        error: "No active subscription found to unsubscribe",
+      });
+    }
+
+    // Update business
+    business.currentSubscription = null;
+    business.verified = false;
+    await business.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Business unsubscribed successfully",
+    });
+  } catch (err) {
+    console.error("❌ Unsubscribe error:", err);
     res.status(500).json({ success: false, error: err.message });
   }
 };

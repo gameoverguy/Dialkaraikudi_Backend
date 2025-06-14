@@ -20,19 +20,22 @@ const disableExpiredSubscriptions = async () => {
     const expiredSubIds = expiredSubscriptions.map((sub) => sub._id);
 
     // Mark subscriptions as expired
-    await Subscription.updateMany(
+    const subUpdateResult = await Subscription.updateMany(
       { _id: { $in: expiredSubIds } },
       { $set: { status: "expired" } }
     );
 
     // Clear currentSubscription and reset verified
-    await Business.updateMany(
+    const bizUpdateResult = await Business.updateMany(
       { currentSubscription: { $in: expiredSubIds } },
       { $set: { currentSubscription: null, verified: false } }
     );
 
     console.log(
-      `✅ Marked ${expiredSubscriptions.length} subscriptions as expired and cleared related currentSubscription`
+      `✅ Marked ${subUpdateResult.modifiedCount} subscriptions as expired`
+    );
+    console.log(
+      `✅ Cleared currentSubscription for ${bizUpdateResult.modifiedCount} businesses`
     );
   } catch (err) {
     console.error("❌ Error expiring subscriptions:", err);
@@ -40,8 +43,18 @@ const disableExpiredSubscriptions = async () => {
 };
 
 // Run daily at midnight
-cron.schedule("0 0 * * *", disableExpiredSubscriptions, {
-  timezone: "Asia/Kolkata",
-});
+cron.schedule(
+  "0 0 * * *",
+  () => {
+    try {
+      disableExpiredSubscriptions();
+    } catch (err) {
+      console.error("❌ Cron job failed to start:", err);
+    }
+  },
+  {
+    timezone: "Asia/Kolkata",
+  }
+);
 
 module.exports = disableExpiredSubscriptions;
