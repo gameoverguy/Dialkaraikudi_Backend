@@ -6,6 +6,7 @@ const planController = require("../controllers/subscriptionPlanController");
 
 // Business endpoints
 router.post("/subscribe", subscriptionController.subscribe);
+router.post("/unsubscribe", subscriptionController.unsubscribe);
 router.get(
   "/subscription/:businessId",
   subscriptionController.getBusinessSubscription
