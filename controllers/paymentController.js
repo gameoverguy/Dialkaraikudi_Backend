@@ -34,8 +34,16 @@ exports.verifyPayment = async (req, res) => {
       razorpay_signature,
       amount,
       currency,
+
+      // 🆕 New fields from frontend
+      businessId,
+      businessName,
+      type, // "slotPurchase" or "subscriptionPurchase"
+      itemId, // slotId or planId
+      itemName, // slotName or planName
     } = req.body;
 
+    // Signature verification
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -44,6 +52,7 @@ exports.verifyPayment = async (req, res) => {
 
     const isVerified = expectedSignature === razorpay_signature;
 
+    // Save payment with all details
     const payment = new Payment({
       razorpay_order_id,
       razorpay_payment_id,
@@ -51,6 +60,12 @@ exports.verifyPayment = async (req, res) => {
       amount,
       currency,
       isVerified,
+
+      businessId,
+      businessName,
+      type,
+      itemId,
+      itemName,
     });
 
     await payment.save();
@@ -58,8 +73,10 @@ exports.verifyPayment = async (req, res) => {
     res.status(200).json({
       message: isVerified ? "Payment verified" : "Invalid signature",
       success: isVerified,
+      paymentId: payment._id,
     });
   } catch (err) {
+    console.error("Verification error:", err);
     res.status(500).json({ message: "Verification failed", error: err });
   }
 };
