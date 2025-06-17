@@ -2,17 +2,6 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async (to, subject, otp) => {
   try {
-    // const transporter = nodemailer.createTransport({
-    //   service: "Gmail",
-    //   auth: {
-    //     user: process.env.EMAIL_USER,
-    //     pass: process.env.EMAIL_PASS,
-    //   },
-    //   tls: {
-    //     rejectUnauthorized: false,
-    //   },
-    // });
-
     const transporter = nodemailer.createTransport({
       host: "smtp.zoho.in", // or smtp.zoho.com if you're using Zoho.com instead of Zoho.in
       port: 465, // or 587 for TLS (465 is for SSL)

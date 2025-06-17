@@ -75,6 +75,7 @@ const slotPurchaseRoutes = require("./routes/slotPurchaseRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const subscriptions = require("./routes/subscriptionRoutes");
+const apiutils = require("./routes/invoiceRoutes");
 
 // Route Mounting
 app.use("/authentication", authenticationRoutes); // login
@@ -90,6 +91,7 @@ app.use("/slotPurchases", slotPurchaseRoutes);
 app.use("/contact", contactRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/subscriptions", subscriptions);
+app.use("/apiutils", apiutils);
 
 // Example Home
 app.get("/", (req, res) => {
