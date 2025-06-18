@@ -376,7 +376,7 @@ exports.generateAndSendInvoice = async (invoiceData) => {
 
   const browser = await puppeteer.launch({
     args: chromium.args,
-    executablePath: await chromium.executablePath,
+    executablePath: (await chromium.executablePath) || "/usr/bin/google-chrome",
     headless: chromium.headless,
     ignoreHTTPSErrors: true,
   });
