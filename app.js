@@ -14,6 +14,7 @@ const app = express();
 // ✅ Load the cron jobs
 require("./cron_jobs/expireAds");
 require("./cron_jobs/expireSubscriptions");
+require("./cron_jobs/expireOldFeedPosts");
 
 // Allowed frontend origins
 const allowedOrigins = [
@@ -76,6 +77,7 @@ const contactRoutes = require("./routes/contactRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const subscriptions = require("./routes/subscriptionRoutes");
 const apiutils = require("./routes/invoiceRoutes");
+const feedsRoutes = require("./routes/feedRoutes");
 
 // Route Mounting
 app.use("/authentication", authenticationRoutes); // login
@@ -92,6 +94,7 @@ app.use("/contact", contactRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/subscriptions", subscriptions);
 app.use("/apiutils", apiutils);
+app.use("/feeds", feedsRoutes);
 
 // Example Home
 app.get("/", (req, res) => {

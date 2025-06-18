@@ -14,7 +14,7 @@ exports.generateAndSendInvoice = async (invoiceData) => {
     { new: true, upsert: true }
   );
 
-  const invoiceNo = `INVDK${yearSuffix}-${(10000 + counter.seq).toString()}`;
+  const invoiceNo = `INVDK${yearSuffix}${(10000 + counter.seq).toString()}`;
 
   const {
     date,
@@ -59,6 +59,14 @@ exports.generateAndSendInvoice = async (invoiceData) => {
         border: 1px solid #ddd;
         padding: 20px 30px;
         border-radius: 6px;
+        position: relative;
+      }
+      .logo {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        width: 100px; /* Adjust size as needed */
+        height: auto;
       }
       .header {
         text-align: center;
@@ -131,6 +139,9 @@ exports.generateAndSendInvoice = async (invoiceData) => {
   </head>
   <body>
     <div class="container">
+      <!-- Company Logo -->
+      <img class="logo" src="https://www.dialkaraikudi.com/assets/logo_01-DYIuitUZ.png" alt="Company Logo" />
+
       <div class="header">
         <h2>Tax Invoice (Paid)</h2>
       </div>
@@ -143,20 +154,27 @@ exports.generateAndSendInvoice = async (invoiceData) => {
         ).toLocaleDateString()}</p>
       </div>
 
-      <div class="section">
-        <div class="section-title">From:</div>
-        <p>Dialkaraikudi</p>
-        <p>123 Your Address</p>
-        <p>GSTIN: 29ABCDE1234F1Z5</p>
-        <p>support@dialkaraikudi.com</p>
-      </div>
+      <div class="section" style="display: flex; justify-content: space-between; gap: 20px;">
+  <div style="width: 50%;">
+    <div class="section-title">From:</div>
+    <p>SUNGLASSCHETTINAD RETAIL PRIVATE LIMITED</p>
+    <p>20, KALANIVASAL AGRAGRAM,<br/>
+    THIRUGANASAMBANTHAR STREET,<br/>
+    Karaikkudi, Sivaganga,<br/>
+    Tamil Nadu - 630002</p>
+    <p>GSTIN: 33ABJCS2458R1ZN</p>
+    <p>admin@dialkaraikudi.com</p>
+  </div>
 
-      <div class="section">
+  <div style="width: 50%;">
     <div class="section-title">Billed To:</div>
     <p>${billedTo.name}</p>
-    <p>${billedTo.address}</p>
+    ${billedTo.address ? `<p>Address: ${billedTo.address}</p>` : ""}
     ${billedTo.gstin ? `<p>GSTIN: ${billedTo.gstin}</p>` : ""}
   </div>
+</div>
+
+
       <table>
         <thead>
           <tr>
@@ -203,7 +221,8 @@ exports.generateAndSendInvoice = async (invoiceData) => {
       </div>
     </div>
   </body>
-</html>`; // your invoice HTML string here
+</html>
+`; // your invoice HTML string here
 
   const mailContent = `<html>
   <body style="margin:0; padding:0; background-color:#f4f4f4;">
@@ -254,7 +273,7 @@ exports.generateAndSendInvoice = async (invoiceData) => {
 
                 <p>Please keep this invoice for your records.</p>
                 <p>If you have any questions, feel free to contact us at 
-                  <a href="mailto:admin@dialkaraikudi.com" style="color:#e74c3c; text-decoration:none;">support@dialkaraikudi.com</a>.
+                  <a href="mailto:admin@dialkaraikudi.com" style="color:#e74c3c; text-decoration:none;">admin@dialkaraikudi.com</a>.
                 </p>
                 <p style="margin-bottom:0;">Thanks for choosing <strong style="color:#34495e;">Dialkaraikudi</strong>!</p>
                 <p style="margin: 5px 0 0 0;">Best regards,<br><strong>Dialkaraikudi Team</strong></p>
@@ -273,7 +292,79 @@ exports.generateAndSendInvoice = async (invoiceData) => {
   </body>
 </html>`;
 
+  const notificationMailContent = `<html>
+  <body style="margin:0; padding:0; background-color:#f4f4f4;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f4f4f4">
+      <tr>
+        <td align="center" style="padding: 20px 10px;">
+          <table width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="border-radius:8px; overflow:hidden; box-shadow:0 0 10px rgba(0,0,0,0.05);">
+            
+            <!-- Header -->
+            <tr>
+              <td bgcolor="#e6f3ff" style="padding: 20px; text-align: center;">
+                <img src="https://www.dialkaraikudi.com/assets/logo_01-DYIuitUZ.png" width="120" alt="Dialkaraikudi" style="display: block; margin: auto;">
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding: 30px; font-family: Arial, sans-serif; font-size: 16px; color: #333;">
+                <p style="margin-top:0;"><strong>Hi Admin,</strong></p>
+                
+                <p>We’re excited to let you know that a new purchase has been successfully completed from <strong style="color:#34495e;">Dialkaraikudi</strong>.</p>
+
+                <p>Here are the details of your purchase:</p>
+
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 20px 0;">
+                  <tr>
+                    <td style="padding: 8px 0; color:#555;">Invoice Number:</td>
+                    <td style="padding: 8px 0; color:#333;"><strong>${invoiceNo}</strong></td>
+                  </tr>
+                  <tr style="background-color: #f9f9f9;">
+                    <td style="padding: 8px 0; color:#555;">Purchase Date:</td>
+                    <td style="padding: 8px 0; color:#333;">${new Date(
+                      date
+                    ).toLocaleDateString()}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0; color:#555;">Payment Received On:</td>
+                    <td style="padding: 8px 0; color:#333;">${new Date(
+                      paidOn
+                    ).toLocaleDateString()}</td>
+                  </tr>
+                  <tr style="background-color: #f9f9f9;">
+                    <td style="padding: 8px 0; color:#555;">Amount Paid:</td>
+                    <td style="padding: 8px 0; color:#333;">INR ${total.toFixed(
+                      2
+                    )} (incl. GST)</td>
+                  </tr>
+                </table>
+
+                <p><strong>Item:</strong> ${itemName}</p>
+                <p><strong>Description:</strong> ${itemDescription}</p>
+
+                <p>You can find the attached invoice for your records.</p>
+
+                <p style="margin: 5px 0 0 0;">Regards,<br><strong>The Dialkaraikudi Team</strong></p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td bgcolor="#e6f3ff" style="height: 30px;"></td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+`;
+
   const mailSubject = `Your Dialkaraikudi Invoice [${invoiceNo}] — Payment Received`;
+  const notificationMailSubject = `Purchase Notification: [${invoiceNo}] — Payment Received at Dialkaraikudi`;
 
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -291,7 +382,18 @@ exports.generateAndSendInvoice = async (invoiceData) => {
 
   await browser.close();
 
-  await sendInvoiceEmail(email, mailSubject, mailContent, pdfBuffer);
+  try {
+    await sendInvoiceEmail(email, mailSubject, mailContent, pdfBuffer);
+    await sendInvoiceEmail(
+      process.env.ADMIN_EMAIL,
+      notificationMailSubject,
+      notificationMailContent,
+      pdfBuffer,
+      invoiceNo
+    );
+  } catch (err) {
+    console.error("Error sending invoice email:", err);
+  }
 
   return {
     success: true,

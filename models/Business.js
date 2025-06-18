@@ -24,7 +24,10 @@ const businessSchema = new mongoose.Schema(
     ownerName: { type: String, required: true },
 
     isBlocked: { type: Boolean, default: false },
-    logoUrl: { type: String },
+    logoUrl: {
+      type: String,
+      default: "https://www.dialkaraikudi.com/assets/bulb-YHzv2teu.png",
+    },
     description: { type: String },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -97,6 +100,7 @@ const businessSchema = new mongoose.Schema(
     holidayDates: [Date],
 
     gst: { type: String },
+    primaryPhoto: { type: String },
     photos: [String],
     ratings: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },

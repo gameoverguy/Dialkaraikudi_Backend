@@ -67,14 +67,6 @@ exports.login = async (req, res) => {
 
     clearAuthCookies(res);
 
-    // ✅ Set token in cookie
-    // res.cookie("businessToken", token, {
-    //   httpOnly: true,
-    //   secure: true, // required for HTTPS
-    //   sameSite: "None", // allows cross-site
-    //   maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
-    // });
-
     res.status(200).json({
       message: "Login successful.",
       token,

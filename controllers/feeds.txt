@@ -1,0 +1,107 @@
+📌 Base URL: http://localhost:5000/feeds
+
+🔹 1. Get All Feed Posts (Public)
+Method: GET
+
+URL: http://localhost:5000/feeds
+
+Auth: None
+
+Headers: None
+
+🔹 2. Create Feed Post (Business)
+Method: POST
+
+URL: http://localhost:5000/feeds
+
+Auth: None
+
+Headers:
+
+pgsql
+Copy
+Edit
+Content-Type: application/json
+Body (raw → JSON):
+
+json
+Copy
+Edit
+{
+  "businessId": "YOUR_BUSINESS_ID",
+  "imageUrl": "https://example.com/image.jpg",
+  "description": "Optional description"
+}
+🔹 3. Get Posts by Business ID
+Method: GET
+
+URL: http://localhost:5000/feeds/business/:id
+(replace :id with the Business ID)
+
+Example:
+http://localhost:5000/feeds/business/664d9a0abc1234567890abcd
+
+Auth: None
+
+Headers: None
+
+🔹 4. Like / Unlike Post
+Method: PUT
+
+URL: http://localhost:5000/feeds/:postId/like
+(replace :postId with Post ID)
+
+Headers:
+
+pgsql
+Copy
+Edit
+Content-Type: application/json
+Body (raw → JSON):
+
+json
+Copy
+Edit
+{
+  "userId": "USER_OR_BUSINESS_ID",
+  "userType": "User" // or "Business"
+}
+🔹 5. Edit Post Description (Business Only)
+Method: PUT
+
+URL: http://localhost:5000/feeds/:postId/edit
+
+Headers:
+
+pgsql
+Copy
+Edit
+Content-Type: application/json
+Body (raw → JSON):
+
+json
+Copy
+Edit
+{
+  "description": "Updated description here",
+  "businessId": "BUSINESS_ID"
+}
+🔹 6. Delete Post (Business Only)
+Method: DELETE
+
+URL: http://localhost:5000/feeds/:postId
+
+Headers:
+
+pgsql
+Copy
+Edit
+Content-Type: application/json
+Body (raw → JSON):
+
+json
+Copy
+Edit
+{
+  "businessId": "BUSINESS_ID"
+}

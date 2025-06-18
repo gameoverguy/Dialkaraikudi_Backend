@@ -5,6 +5,7 @@ const Payment = require("../models/Payment");
 const AdvertSlot = require("../models/AdvertSlot");
 const SubscriptionPlan = require("../models/SubscriptionPlan");
 const Business = require("../models/Business");
+const { generateAndSendInvoice } = require("../functions/invoiceGenerator");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -48,14 +49,15 @@ exports.verifyPayment = async (req, res) => {
       itemName, // slotName or planName
     } = req.body;
 
-    const itemDescription = "";
-    const email = "";
+    let itemDescription = "";
+    let email = "";
 
     const business = await Business.findById(businessId);
     if (!business) {
       return res.status(404).json({ message: "business not found" });
-      email = business.email;
     }
+
+    email = business.email;
 
     if (type === "slotPurchase") {
       const slot = await AdvertSlot.findById(itemId);
@@ -66,6 +68,8 @@ exports.verifyPayment = async (req, res) => {
       if (!plan) return res.status(404).json({ message: "Plan not found" });
       itemDescription = plan.description;
     }
+
+    console.log(itemDescription);
 
     // Signature verification
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -92,21 +96,23 @@ exports.verifyPayment = async (req, res) => {
       itemName,
     });
 
+    console.log(business.address.formattedAddress);
+
     const invoiceData = {
       date: new Date(),
       paidOn: new Date(),
       billedTo: {
-        name: businessName,
-        address: business.formattedAddress,
+        name: business.ownerName || "Business Owner",
+        address: business.address.formattedAddress,
         gstin: business.gst,
       },
       amount: baseAmount,
       cgst: cgstAmount,
       sgst: sgstAmount,
       total: amount,
-      email,
-      itemName,
-      itemDescription,
+      email: email,
+      itemName: itemName,
+      itemDescription: itemDescription,
     };
 
     await payment.save();
