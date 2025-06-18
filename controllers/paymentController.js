@@ -2,6 +2,9 @@
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const Payment = require("../models/Payment");
+const AdvertSlot = require("../models/AdvertSlot");
+const SubscriptionPlan = require("../models/SubscriptionPlan");
+const Business = require("../models/Business");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -32,9 +35,11 @@ exports.verifyPayment = async (req, res) => {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
+      baseAmount,
+      cgstAmount,
+      sgstAmount,
       amount,
       currency,
-
       // 🆕 New fields from frontend
       businessId,
       businessName,
@@ -42,6 +47,25 @@ exports.verifyPayment = async (req, res) => {
       itemId, // slotId or planId
       itemName, // slotName or planName
     } = req.body;
+
+    const itemDescription = "";
+    const email = "";
+
+    const business = await Business.findById(businessId);
+    if (!business) {
+      return res.status(404).json({ message: "business not found" });
+      email = business.email;
+    }
+
+    if (type === "slotPurchase") {
+      const slot = await AdvertSlot.findById(itemId);
+      if (!slot) return res.status(404).json({ message: "Slot not found" });
+      itemDescription = slot.description;
+    } else if (type === "subscriptionPurchase") {
+      const plan = await SubscriptionPlan.findById(itemId);
+      if (!plan) return res.status(404).json({ message: "Plan not found" });
+      itemDescription = plan.description;
+    }
 
     // Signature verification
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -68,7 +92,26 @@ exports.verifyPayment = async (req, res) => {
       itemName,
     });
 
+    const invoiceData = {
+      date: new Date(),
+      paidOn: new Date(),
+      billedTo: {
+        name: businessName,
+        address: business.formattedAddress,
+        gstin: business.gst,
+      },
+      amount: baseAmount,
+      cgst: cgstAmount,
+      sgst: sgstAmount,
+      total: amount,
+      email,
+      itemName,
+      itemDescription,
+    };
+
     await payment.save();
+
+    await generateAndSendInvoice(invoiceData);
 
     res.status(200).json({
       message: isVerified ? "Payment verified" : "Invalid signature",
