@@ -1,7 +1,6 @@
-// services/invoiceService.js
-// const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer");
 const chromium = require("chrome-aws-lambda");
-const puppeteer = require("puppeteer-core");
+// const puppeteer = require("puppeteer-core");
 
 const Invoice = require("../models/Invoice");
 const Counter = require("../models/Counter");
@@ -376,13 +375,13 @@ exports.generateAndSendInvoice = async (invoiceData) => {
 
   const browser = await puppeteer.launch({
     args: chromium.args,
-    executablePath:
-      (await chromium.executablePath) || "/usr/bin/google-chrome-stable",
+    executablePath: await chromium.executablePath,
     headless: chromium.headless,
     ignoreHTTPSErrors: true,
   });
 
   const page = await browser.newPage();
+  await page.goto("https://developer.chrome.com/");
   await page.setContent(html, { waitUntil: "networkidle0" });
 
   const pdfBuffer = await page.pdf({
