@@ -1,5 +1,8 @@
 // services/invoiceService.js
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
+const puppeteer = require("puppeteer-core");
+
 const Invoice = require("../models/Invoice");
 const Counter = require("../models/Counter");
 const sendInvoiceEmail = require("../utils/sendInvoiceEmail");
@@ -372,12 +375,10 @@ exports.generateAndSendInvoice = async (invoiceData) => {
   // });
 
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: true,
+    args: chromium.args,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
     ignoreHTTPSErrors: true,
-    executablePath:
-      process.env.PUPPETEER_EXECUTABLE_PATH ||
-      require("puppeteer").executablePath(),
   });
 
   const page = await browser.newPage();
