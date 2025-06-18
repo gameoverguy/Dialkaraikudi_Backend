@@ -1,10 +1,7 @@
-const puppeteer = require("puppeteer");
-const chromium = require("chrome-aws-lambda");
-// const puppeteer = require("puppeteer-core");
-
 const Invoice = require("../models/Invoice");
 const Counter = require("../models/Counter");
 const sendInvoiceEmail = require("../utils/sendInvoiceEmail");
+const html_to_pdf = require("html-pdf-node");
 
 exports.generateAndSendInvoice = async (invoiceData) => {
   const yearSuffix = new Date().getFullYear().toString().slice(-2);
@@ -373,24 +370,16 @@ exports.generateAndSendInvoice = async (invoiceData) => {
   //   ignoreHTTPSErrors: true,
   // });
 
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
-    ignoreHTTPSErrors: true,
-  });
-
-  const page = await browser.newPage();
-  await page.goto("https://developer.chrome.com/");
-  await page.setContent(html, { waitUntil: "networkidle0" });
-
-  const pdfBuffer = await page.pdf({
+  const file = { content: html };
+  const options = {
     format: "A4",
-    printBackground: true,
-    margin: { top: "20mm", bottom: "20mm" },
-  });
+    margin: {
+      top: "20mm",
+      bottom: "20mm",
+    },
+  };
 
-  await browser.close();
+  const pdfBuffer = await html_to_pdf.generatePdf(file, options);
 
   try {
     await sendInvoiceEmail(email, mailSubject, mailContent, pdfBuffer);
