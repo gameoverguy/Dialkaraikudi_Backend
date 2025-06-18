@@ -382,7 +382,13 @@ exports.generateAndSendInvoice = async (invoiceData) => {
   const pdfBuffer = await html_to_pdf.generatePdf(file, options);
 
   try {
-    await sendInvoiceEmail(email, mailSubject, mailContent, pdfBuffer);
+    await sendInvoiceEmail(
+      email,
+      mailSubject,
+      mailContent,
+      pdfBuffer,
+      invoiceNo
+    );
     await sendInvoiceEmail(
       process.env.ADMIN_EMAIL,
       notificationMailSubject,
