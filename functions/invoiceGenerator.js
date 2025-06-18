@@ -366,9 +366,18 @@ exports.generateAndSendInvoice = async (invoiceData) => {
   const mailSubject = `Your Dialkaraikudi Invoice [${invoiceNo}] — Payment Received`;
   const notificationMailSubject = `Purchase Notification: [${invoiceNo}] — Payment Received at Dialkaraikudi`;
 
+  // const browser = await puppeteer.launch({
+  //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  //   ignoreHTTPSErrors: true,
+  // });
+
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: true,
     ignoreHTTPSErrors: true,
+    executablePath:
+      process.env.PUPPETEER_EXECUTABLE_PATH ||
+      require("puppeteer").executablePath(),
   });
 
   const page = await browser.newPage();
