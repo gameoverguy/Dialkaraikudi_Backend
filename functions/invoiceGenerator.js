@@ -2,6 +2,7 @@ const Invoice = require("../models/Invoice");
 const Counter = require("../models/Counter");
 const sendInvoiceEmail = require("../utils/sendInvoiceEmail");
 const html_to_pdf = require("html-pdf-node");
+const formatDateToDDMMYYYY = require("../utils/formatDate");
 
 exports.generateAndSendInvoice = async (invoiceData) => {
   const yearSuffix = new Date().getFullYear().toString().slice(-2);
@@ -147,8 +148,8 @@ exports.generateAndSendInvoice = async (invoiceData) => {
 
       <div class="section">
         <p><strong>Invoice No:</strong> ${invoiceNo}</p>
-        <p><strong>Date:</strong> ${formatDateToDMY(new Date())}</p>
-        <p><strong>Paid On:</strong> ${formatDateToDMY(paidOn)}</p>
+        <p><strong>Date:</strong> ${formatDateToDDMMYYYY(new Date())}</p>
+        <p><strong>Paid On:</strong> ${formatDateToDDMMYYYY(paidOn)}</p>
       </div>
 
       <div class="section" style="display: flex; justify-content: space-between; gap: 20px;">

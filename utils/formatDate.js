@@ -1,4 +1,4 @@
-const formatDateToDMY = (isoDateString) => {
+const formatDateToDDMMYYYY = (isoDateString) => {
   if (!isoDateString) return "";
 
   const date = new Date(isoDateString);
@@ -9,4 +9,4 @@ const formatDateToDMY = (isoDateString) => {
   return `${day}-${month}-${year}`;
 };
 
-module.exports = formatDateToDMY;
+module.exports = formatDateToDDMMYYYY;
