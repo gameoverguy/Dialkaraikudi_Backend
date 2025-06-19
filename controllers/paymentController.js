@@ -41,7 +41,6 @@ exports.verifyPayment = async (req, res) => {
       sgstAmount,
       amount,
       currency,
-      // 🆕 New fields from frontend
       businessId,
       businessName,
       type, // "slotPurchase" or "subscriptionPurchase"
