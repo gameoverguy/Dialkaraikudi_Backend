@@ -115,13 +115,16 @@ exports.verifyPayment = async (req, res) => {
 
     await payment.save();
 
-    await generateAndSendInvoice(invoiceData);
-
     res.status(200).json({
       message: isVerified ? "Payment verified" : "Invalid signature",
       success: isVerified,
       paymentId: payment._id,
     });
+
+    // Run in background
+    generateAndSendInvoice(invoiceData).catch((err) =>
+      console.error("Invoice generation failed:", err)
+    );
   } catch (err) {
     console.error("Verification error:", err);
     res.status(500).json({ message: "Verification failed", error: err });

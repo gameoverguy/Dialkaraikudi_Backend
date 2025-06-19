@@ -364,11 +364,6 @@ exports.generateAndSendInvoice = async (invoiceData) => {
   const mailSubject = `Your Dialkaraikudi Invoice [${invoiceNo}] — Payment Received`;
   const notificationMailSubject = `Purchase Notification: [${invoiceNo}] — Payment Received at Dialkaraikudi`;
 
-  // const browser = await puppeteer.launch({
-  //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  //   ignoreHTTPSErrors: true,
-  // });
-
   const file = { content: html };
   const options = {
     format: "A4",
@@ -378,9 +373,12 @@ exports.generateAndSendInvoice = async (invoiceData) => {
     },
   };
 
+  console.time("invoice:pdf");
   const pdfBuffer = await html_to_pdf.generatePdf(file, options);
+  console.timeEnd("invoice:pdf");
 
   try {
+    console.time("invoice:email1");
     await sendInvoiceEmail(
       email,
       mailSubject,
@@ -388,6 +386,9 @@ exports.generateAndSendInvoice = async (invoiceData) => {
       pdfBuffer,
       invoiceNo
     );
+    console.timeEnd("invoice:email1");
+
+    console.time("invoice:email2");
     await sendInvoiceEmail(
       process.env.ADMIN_EMAIL,
       notificationMailSubject,
@@ -395,6 +396,7 @@ exports.generateAndSendInvoice = async (invoiceData) => {
       pdfBuffer,
       invoiceNo
     );
+    console.timeEnd("invoice:email2");
   } catch (err) {
     console.error("Error sending invoice email:", err);
   }
