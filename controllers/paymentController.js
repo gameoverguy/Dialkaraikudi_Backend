@@ -96,8 +96,6 @@ exports.verifyPayment = async (req, res) => {
       itemName,
     });
 
-    console.log(business.address.formattedAddress);
-
     const invoiceData = {
       date: new Date(),
       paidOn: new Date(),

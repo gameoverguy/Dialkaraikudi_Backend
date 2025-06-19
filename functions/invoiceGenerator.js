@@ -147,10 +147,8 @@ exports.generateAndSendInvoice = async (invoiceData) => {
 
       <div class="section">
         <p><strong>Invoice No:</strong> ${invoiceNo}</p>
-        <p><strong>Date:</strong> ${new Date(date).toLocaleDateString()}</p>
-        <p><strong>Paid On:</strong> ${new Date(
-          paidOn
-        ).toLocaleDateString()}</p>
+        <p><strong>Date:</strong> ${formatDateToDMY(new Date())}</p>
+        <p><strong>Paid On:</strong> ${formatDateToDMY(paidOn)}</p>
       </div>
 
       <div class="section" style="display: flex; justify-content: space-between; gap: 20px;">
