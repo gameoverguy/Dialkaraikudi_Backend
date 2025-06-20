@@ -45,7 +45,7 @@ exports.getFeed = async (req, res) => {
 // Get a single feed post by ID
 exports.getPostById = async (req, res) => {
   try {
-    const { postId } = req.params;
+    const postId = req.params.id;
 
     const post = await FeedPost.findById(postId).populate(
       "business",
