@@ -36,14 +36,6 @@ exports.loginUser = async (req, res) => {
 
     clearAuthCookies(res);
 
-    // ✅ Set token in cookie
-    // res.cookie("userToken", token, {
-    //   httpOnly: true,
-    //   secure: false, // required for HTTPS
-    //   sameSite: "None", // allows cross-site
-    //   maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days
-    // });
-
     res.status(200).json({
       message: "Login successful.",
       token,
@@ -104,10 +96,7 @@ exports.googleAuth = async (req, res) => {
       }
     }
 
-    console.log("1");
-
     if (user.isBlocked) {
-      console.log("2");
       return res.status(403).json({ message: "Your account is blocked" });
     }
 
@@ -123,21 +112,21 @@ exports.googleAuth = async (req, res) => {
 
     clearAuthCookies(res);
 
-    await logEvent({
-      level: "info",
-      message: "Logged in using Google OAuth",
-      model: "Business",
-      action: "update",
-      actorType: "Business",
-      actorId: req.business?._id,
-      request: {
-        url: req.originalUrl,
-        method: req.method,
-      },
-      meta: {
-        updatedFields: Object.keys(req.body),
-      },
-    });
+    // await logEvent({
+    //   level: "info",
+    //   message: "Logged in using Google OAuth",
+    //   model: "Business",
+    //   action: "update",
+    //   actorType: "Business",
+    //   actorId: req.business?._id,
+    //   request: {
+    //     url: req.originalUrl,
+    //     method: req.method,
+    //   },
+    //   meta: {
+    //     updatedFields: Object.keys(req.body),
+    //   },
+    // });
 
     return res.status(200).json({
       message: "Google login successful",
