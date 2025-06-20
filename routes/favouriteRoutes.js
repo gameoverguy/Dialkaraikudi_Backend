@@ -8,13 +8,13 @@ const requireRole = require("../middleware/requireRole");
 router.post(
   "/add",
   verifyToken,
-  requireRole("user"),
+  requireRole("user", "business"),
   favouriteController.addToFavourites
 );
 router.post(
   "/remove",
   verifyToken,
-  requireRole("user"),
+  requireRole("user", "business"),
   favouriteController.removeFromFavourites
 );
 
@@ -22,7 +22,7 @@ router.post(
 router.get(
   "/user",
   verifyToken,
-  requireRole("user"),
+  requireRole("user", "business"),
   favouriteController.getUserFavourites
 );
 
@@ -30,7 +30,7 @@ router.get(
 router.get(
   "/check",
   verifyToken,
-  requireRole("user"),
+  requireRole("user", "business"),
   favouriteController.isFavourited
 );
 
