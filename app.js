@@ -5,6 +5,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const requestContext = require("./middleware/requestContext");
 
 dotenv.config();
 connectDB(); // MongoDB connection
@@ -61,6 +62,8 @@ app.use(
     cookie: { maxAge: 60 * 60 * 1000 }, // 1 hour
   })
 );
+
+app.use(requestContext);
 
 // Import routers
 const authenticationRoutes = require("./routes/authenticationRoutes");

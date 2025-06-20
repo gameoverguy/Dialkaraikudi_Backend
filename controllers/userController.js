@@ -123,12 +123,21 @@ exports.googleAuth = async (req, res) => {
 
     clearAuthCookies(res);
 
-    // res.cookie("userToken", token, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   sameSite: "None",
-    //   maxAge: 21 * 24 * 60 * 60 * 1000,
-    // });
+    await logEvent({
+      level: "info",
+      message: "Logged in using Google OAuth",
+      model: "Business",
+      action: "update",
+      actorType: "Business",
+      actorId: req.business?._id,
+      request: {
+        url: req.originalUrl,
+        method: req.method,
+      },
+      meta: {
+        updatedFields: Object.keys(req.body),
+      },
+    });
 
     return res.status(200).json({
       message: "Google login successful",
