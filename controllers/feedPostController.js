@@ -42,6 +42,28 @@ exports.getFeed = async (req, res) => {
   }
 };
 
+// Get a single feed post by ID
+exports.getPostById = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const post = await FeedPost.findById(postId).populate(
+      "business",
+      "businessName logoUrl"
+    );
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.json(post);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch post", error: err.message });
+  }
+};
+
 // Get all posts by a business ID (public/vendor panel)
 exports.getPostsByBusinessId = async (req, res) => {
   try {

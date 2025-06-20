@@ -9,6 +9,9 @@ router.get("/", feedPostController.getFeed);
 // Get posts by business ID (public or admin)
 router.get("/business/:id", feedPostController.getPostsByBusinessId);
 
+// Get posts by post ID (public or admin)
+router.get("/:id", feedPostController.getPostById);
+
 // Create post (only business)
 router.post("/", feedPostController.createPost);
 
