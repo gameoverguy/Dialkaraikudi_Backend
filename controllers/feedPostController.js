@@ -1,6 +1,7 @@
 const FeedPost = require("../models/FeedPost");
 const Business = require("../models/Business");
 const User = require("../models/User");
+const { attachSignedUrlsToPost } = require("../utils/mapSignedUrls");
 
 // Create new feed post
 exports.createPost = async (req, res) => {
@@ -34,7 +35,11 @@ exports.getFeed = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate("business", "businessName logoUrl");
 
-    res.json(posts);
+    const postsWithUrls = await Promise.all(
+      posts.map((p) => attachSignedUrlsToPost(p))
+    );
+
+    res.json(postsWithUrls);
   } catch (err) {
     res
       .status(500)
@@ -55,8 +60,8 @@ exports.getPostById = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-
-    res.json(post);
+    const postWithUrl = await attachSignedUrlsToPost(post);
+    res.json(postWithUrl);
   } catch (err) {
     res
       .status(500)
@@ -79,7 +84,11 @@ exports.getPostsByBusinessId = async (req, res) => {
       likeCount: post.likes?.length || 0,
     }));
 
-    res.json(postsWithLikeCount);
+    const postsWithUrlsAndLikes = await Promise.all(
+      postsWithLikeCount.map((p) => attachSignedUrlsToPost(p))
+    );
+
+    res.json(postsWithUrlsAndLikes);
   } catch (err) {
     res
       .status(500)

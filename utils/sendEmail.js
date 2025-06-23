@@ -10,6 +10,9 @@ const sendEmail = async (to, subject, otp) => {
         user: process.env.EMAIL_USER, // your Zoho email address
         pass: process.env.EMAIL_PASS, // your Zoho app-specific password
       },
+      tls: {
+        rejectUnauthorized: false, // ⛔ not safe for production
+      },
     });
 
     const htmlContent = `

@@ -3,38 +3,46 @@ const router = express.Router();
 const categoryController = require("../controllers/categoryController");
 const verifyToken = require("../middleware/VerifyToken");
 const requireRole = require("../middleware/requireRole");
+const upload = require("../middleware/upload");
 
-//used for creating new category
+// ✅ Create new category (with icon + image upload)
 router.post(
   "/",
   verifyToken,
   requireRole("admin"),
+  upload.uploadCategoryImages,
   categoryController.createCategory
 );
-// bulk upload categories
+
+// ✅ Bulk upload categories (text only, no files)
 router.post(
   "/bulkuploadcategories",
   verifyToken,
   requireRole("admin"),
   categoryController.bulkUploadCategories
 );
-// get all category
+
+// ✅ Get all categories (public)
 router.get("/", categoryController.getAllCategories);
-// get the details of a particular category
+
+// ✅ Get single category by ID
 router.get(
   "/:id",
   verifyToken,
   requireRole("admin"),
   categoryController.getCategoryById
 );
-// update the details of a particular category
+
+// ✅ Update category (with optional new icon/image upload)
 router.put(
   "/:id",
   verifyToken,
   requireRole("admin"),
+  upload.uploadCategoryImages,
   categoryController.updateCategory
 );
-// delete the particular category
+
+// ✅ Delete category
 router.delete(
   "/:id",
   verifyToken,

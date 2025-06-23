@@ -4,6 +4,7 @@ const businessController = require("../controllers/businessController");
 const pendingBusinessController = require("../controllers/pendingBusinessController");
 const verifyToken = require("../middleware/VerifyToken");
 const requireRole = require("../middleware/requireRole");
+const { uploadBusinessImages } = require("../middleware/upload");
 
 // get the dashboard stats
 router.get(
@@ -55,8 +56,18 @@ router.put(
   "/:id",
   verifyToken,
   requireRole("admin", "business"),
+  uploadBusinessImages,
   businessController.updateBusiness
 );
+
+// router.put(
+//   "updateBusinessWithFiles/:id",
+//   verifyToken,
+//   requireRole("business"), // or admin if you allow admin to edit
+//   uploadBusinessImages,
+//   businessController.updateBusinessWithFiles
+// );
+
 router.delete(
   "/:id",
   verifyToken,

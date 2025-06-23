@@ -1,6 +1,7 @@
 const Ad = require("../models/Advert");
 const SlotPurchase = require("../models/SlotPurchase");
 const AdvertSlot = require("../models/AdvertSlot");
+const { getObjectSignedUrl } = require("../utils/s3Utils");
 
 // 1. Create Ad
 exports.createAd = async (req, res) => {
@@ -60,22 +61,33 @@ exports.createAd = async (req, res) => {
   }
 };
 
-// 2. Get Ads (all / filter by slotId or businessId)
 exports.getAds = async (req, res) => {
   try {
     const { slotId, businessId } = req.query;
-    const filter = {};
-    filter.isActive = true;
+    const filter = { isActive: true };
     if (slotId) filter.slotId = slotId;
     if (businessId) filter.businessId = businessId;
 
-    const ads = await Ad.find(filter)
+    let ads = await Ad.find(filter)
       .populate("slotId", "name page")
-      .populate("businessId", "businessName")
-      .then((ads) => ads.filter((ad) => ad.businessId));
+      .populate("businessId", "businessName");
 
-    res.json(ads);
+    ads = ads.filter((ad) => ad.businessId); // remove invalid business refs
+
+    // Replace `contentUrl` key with signed URL
+    const signedAds = await Promise.all(
+      ads.map(async (ad) => {
+        const adObj = ad.toObject();
+        if (adObj.contentUrl) {
+          adObj.contentUrl = await getObjectSignedUrl(adObj.contentUrl);
+        }
+        return adObj;
+      })
+    );
+
+    res.json(signedAds);
   } catch (error) {
+    console.error("Error fetching ads:", error);
     res.status(500).json({ message: error.message });
   }
 };

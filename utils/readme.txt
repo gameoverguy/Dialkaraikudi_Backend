@@ -1,5 +1,0 @@
-node utils/createSuperadmin.js
-
-
-
-///

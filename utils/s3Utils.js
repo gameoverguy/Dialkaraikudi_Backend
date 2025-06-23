@@ -1,11 +1,11 @@
-import {
+const {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
   GetObjectCommand,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import dotenv from "dotenv";
+} = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const dotenv = require("dotenv");
 
 dotenv.config();
 
@@ -22,36 +22,54 @@ const s3Client = new S3Client({
   },
 });
 
-export async function uploadFile(fileBuffer, fileName, mimetype) {
+// ✅ Upload file to S3
+function uploadFile(fileBuffer, fileName, mimetype) {
   const uploadParams = {
     Bucket: bucketName,
     Body: fileBuffer,
-    Key: `business-photos/${fileName}`,
+    Key: fileName,
     ContentType: mimetype,
   };
 
-  await s3Client.send(new PutObjectCommand(uploadParams));
-  return uploadParams.Key; // Return key to store in DB
+  return s3Client.send(new PutObjectCommand(uploadParams));
 }
 
-export function deleteFile(fileKey) {
+// ✅ Delete file from S3
+function deleteFile(fileName) {
   const deleteParams = {
     Bucket: bucketName,
-    Key: fileKey,
+    Key: fileName,
   };
 
   return s3Client.send(new DeleteObjectCommand(deleteParams));
 }
 
-export async function getObjectSignedUrl(key) {
+// ✅ Generate signed URL for reading an object
+async function getObjectSignedUrl(key) {
   const params = {
     Bucket: bucketName,
     Key: key,
   };
 
   const command = new GetObjectCommand(params);
-  const seconds = 60 * 5; // 5 minutes
+  const seconds = 60;
   const url = await getSignedUrl(s3Client, command, { expiresIn: seconds });
 
   return url;
 }
+
+function extractS3Key(signedUrl) {
+  try {
+    const url = new URL(signedUrl);
+    return decodeURIComponent(url.pathname.substring(1)); // remove leading slash
+  } catch {
+    return null;
+  }
+}
+
+module.exports = {
+  uploadFile,
+  deleteFile,
+  getObjectSignedUrl,
+  extractS3Key,
+};

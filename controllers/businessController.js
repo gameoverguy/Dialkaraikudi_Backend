@@ -12,6 +12,8 @@ const {
   getBusinessReviewStats,
 } = require("./trackBusinessView");
 const clearAuthCookies = require("../utils/clearAuthCookies");
+const { attachSignedUrlsToBusiness } = require("../utils/mapSignedUrls");
+const { deleteFile, uploadFile } = require("../utils/s3Utils");
 
 // Business Signup (Simplified)
 exports.businessSignup = async (req, res) => {
@@ -196,13 +198,18 @@ exports.getAllBusinessesAdmin = async (req, res) => {
       "displayName iconUrl"
     );
 
-    res.status(200).json({ success: true, data: businesses });
+    const businessesWithUrls = await Promise.all(
+      businesses.map((b) => attachSignedUrlsToBusiness(b))
+    );
+
+    res.status(200).json({ success: true, data: businessesWithUrls });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
 // Get All Verified Businesses + Category populated
+
 exports.getAllBusinesses = async (req, res) => {
   try {
     const businesses = await Business.find({ verified: true }).populate(
@@ -210,7 +217,12 @@ exports.getAllBusinesses = async (req, res) => {
       "displayName iconUrl"
     );
 
-    res.status(200).json({ success: true, data: businesses });
+    // Convert all businesses to include signed URLs
+    const businessesWithUrls = await Promise.all(
+      businesses.map((b) => attachSignedUrlsToBusiness(b))
+    );
+
+    res.status(200).json({ success: true, data: businessesWithUrls });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -224,7 +236,12 @@ exports.getBusinessesByCategory = async (req, res) => {
       verified: true,
     }).populate("category", "displayName iconUrl");
 
-    res.status(200).json({ success: true, data: businesses });
+    // Convert all businesses to include signed URLs
+    const businessesWithUrls = await Promise.all(
+      businesses.map((b) => attachSignedUrlsToBusiness(b))
+    );
+
+    res.status(200).json({ success: true, data: businessesWithUrls });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -260,8 +277,6 @@ exports.getBusinessById = async (req, res) => {
       verified: true,
     }).populate("category", "displayName iconUrl");
 
-    console.log("266", business);
-
     if (!business) {
       return res.status(404).json({
         success: false,
@@ -285,11 +300,14 @@ exports.getBusinessById = async (req, res) => {
       .sort({ createdAt: -1 })
       .then((reviews) => reviews.filter((review) => review.user)); // filter out null users
 
+    // Convert all businesses to include signed URLs
+    const businessesWithUrls = await attachSignedUrlsToBusiness(business);
+
     // Return business, reviews, and the unique view flag
     res.status(200).json({
       success: true,
       data: {
-        business,
+        business: businessesWithUrls,
         reviews,
         uniqueViewToday: isUniqueView,
       },
@@ -341,11 +359,13 @@ exports.getBusinessForPanelById = async (req, res) => {
       .populate("user", "name email")
       .sort({ createdAt: -1 });
 
+    const businessesWithUrls = await attachSignedUrlsToBusiness(business);
+
     // Return business, reviews,
     res.status(200).json({
       success: true,
       data: {
-        business,
+        business: businessesWithUrls,
         reviews,
       },
     });
@@ -387,6 +407,64 @@ exports.updateBusiness = async (req, res) => {
     });
   }
 };
+
+// exports.updateBusiness = async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//     const business = await Business.findById(id);
+//     if (!business) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Business not found" });
+//     }
+
+//     // Step 1: Parse existingPhotos from request
+//     const existingPhotos = req.body.existingPhotos || []; // S3 keys user wants to keep
+//     const photosToDelete = business.photos.filter(
+//       (key) => !existingPhotos.includes(key)
+//     );
+
+//     // Step 2: Delete old photos from S3
+//     for (const key of photosToDelete) {
+//       await deleteFile(key);
+//     }
+
+//     // Step 3: Upload new files
+//     const uploadedKeys = [];
+//     if (req.files?.photos) {
+//       for (const file of req.files.photos) {
+//         const key = await uploadFile(file); // return the S3 key
+//         uploadedKeys.push(key);
+//       }
+//     }
+
+//     // Step 4: Update the business
+//     business.businessName = req.body.businessName || business.businessName;
+//     business.description = req.body.description || business.description;
+//     business.category = req.body.category || business.category;
+//     business.verified = req.body.verified ?? business.verified;
+//     business.contactDetails.phone =
+//       req.body.phone || business.contactDetails.phone;
+//     business.email = req.body.contactEmail || business.email;
+//     business.address.formattedAddress =
+//       req.body.formattedAddress || business.address.formattedAddress;
+
+//     // Final: Combine existing and new
+//     business.photos = [...existingPhotos, ...uploadedKeys];
+
+//     await business.save();
+
+//     return res.status(200).json({ success: true, data: business });
+//   } catch (error) {
+//     console.error("Update failed", error);
+//     return res.status(500).json({
+//       success: false,
+//       message:
+//         error.message || "Something went wrong while updating the business.",
+//     });
+//   }
+// };
 
 // Delete Business by ID
 exports.deleteBusiness = async (req, res) => {
